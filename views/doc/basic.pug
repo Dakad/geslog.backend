@@ -1,0 +1,14 @@
+
+block content
+  .panel.panel-primary
+    .panel-heading
+      h3.panel-title#basic Introduction - How it works
+    .panel-body
+      p Our API respect REST principles. It works using HTTP protocol, responds only to #[b GET, POST & DELETE] requests to retrieve or send information.
+      p 
+        | The API URL to reach is :  
+        pre= urlApi
+      p Responds always with a #[a(href="#format") HTTP Status code] and a JSON format document with the result of your request and the status code. Combining the returned data with the appropriate status code correctly should give the requester all of the information required to continue.
+      p Eventually an error will occurs, a message will be return as response with the correspponding 
+        | #[a(href="#format") HTTP Status code] to this error. 
+      

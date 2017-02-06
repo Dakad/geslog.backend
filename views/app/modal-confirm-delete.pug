@@ -1,0 +1,16 @@
+// Modal - Confirmation reset tokens
+#confirmDelete.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalConfirmDelete')
+  .modal-dialog(role='document')
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#myModalLabel.modal-title Confirmation
+      .modal-body
+        p What ! Do you really want to remove your app ?
+        p The users using your app will be blocked out.
+        p Do you still want to remove this app from our system ?
+
+      .modal-footer
+        // button.btn.btn-dangerdefault(type='button', data-dismiss='modal') Cancel
+        a.btn.btn-danger.btn-confirm#btnConfirmDelete Delete

@@ -1,0 +1,18 @@
+
+//- Nav link
+    Usage: +navLink("the link label","the link href ")
+    CSS: .input
+    label - [string] The label to show as label
+    link  - [string] The href label for the <a>
+
+mixin navLink(label,link,icon)
+    li(class={active: '/public'+currentUrl === link})
+      if(!icon)
+        a(href=link)=label
+      else
+          a(href=link)
+           span(class='fa fa-'+icon aria-hidden="true") &nbsp;
+            =label
+
+
+

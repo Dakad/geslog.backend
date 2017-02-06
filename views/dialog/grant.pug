@@ -1,0 +1,25 @@
+.jumbotron
+  - console.log(query)
+
+  form.form-horizontal(action="grant"+query method="POST")
+    fieldset
+      legend Grant access to &nbsp;
+        b= client.name
+      .form-group
+        .col-lg-12
+          input.form-control(name='clientId', type="hidden", value=client.id,)
+          input.form-control(name='clientSecret', type="hidden", value=client.secret,)
+          input.form-control(name='redirectUri', type="hidden", value=client.redirectUri)
+          input.form-control(name='useedirectUri', type="hidden", value=client.useredirectUri)
+
+      .form-group
+        h3
+        p This app will be able to acces those kind of infos
+        p
+
+      if(isAuth)
+        .form-group
+          .col-lg-3
+            button.btn.btn-danger.btn-lg(type="submit" name='choice' value="no" ) Deny
+          .col-lg-5.col-lg-offset-4
+            button.btn.btn-success.btn-lg(type="submit" name='choice'  value="yes") Allow

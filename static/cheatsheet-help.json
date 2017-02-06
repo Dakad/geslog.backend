@@ -1,0 +1,50 @@
+{
+    "requestMethod": {
+        "title": "Request method",
+        "description": [
+            "HTTP requests can have different methods that essentially tell the server what type of action to take."
+        ],
+        "content": {
+            "headers": ["Request method", "Use", "Response"],
+            "body": [
+                ["GET", "Read data from the database", "Data object answering the request "],
+                ["POST", "Create a new or Update data in the database", "New/Updated data object as seen in the database"],
+                ["DELETE", "Delete an object from the database", "NULL"]
+            ]
+        }
+    },
+
+    "responseStatusCode": {
+        "title": "API Response Status code",
+        "description": [
+            "All requests return a JSON formatted document with a HTTP Status code. ",
+            "Here is a list of Status code used for response to an API request :"
+        ],
+        "content": {
+            "headers": ["Status Code", "Name", "RUse case"],
+            "body": [
+                ["200", "OK", "A successful GET or PUT request"],
+                ["201", "Created", "A successful POST request"],
+                ["204", "No content", "A successful DELETE request"],
+                ["400", "Bad request", "An unsuccessful GET, POST, or PUT request, due to invalid content"],
+                ["401", "Unauthorized", "Requesting a restricted URL with incorrect auth-token or none provided"],
+                ["403", "Forbidden", "Making a request that isn’t allowed"],
+                ["404", "Not found", "Unsuccessful request due to an incorrect parameter in the URL."],
+                ["405", "Method not allowed", "Request method not allowed for the given URL"],
+                ["409", "Conflict", "Unsuccessful POST request when another object already exists with the same data"],
+                ["500", "Internal server error", "Problem with your server or the database server"]
+            ]
+        }
+
+    },
+
+    "responseData": {
+        "title": "Response Data",
+        "description": [
+            "The API returns always a JSON format data, one of three things for each request",
+            "If an error occurs, 'data' will  be replaced by 'err' which corresponding to the status code of this error."
+        ],
+        "code": "{\n    'data'    : {} // Contains the result of the request\n    'status'  : '200' // Corresponding to the response status code\n    'err'     : 'Shit went down !' // Error object with the matching status code and message.\n}"
+    }
+
+}

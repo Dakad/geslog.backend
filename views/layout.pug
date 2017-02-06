@@ -1,0 +1,15 @@
+doctype html
+html(lang='en')
+  include ./_partials/_head
+  body
+
+    include ./_partials/_navbar-header
+
+    .container
+      if(flashMsg)
+        .row.clearfix
+          include ./_partials/_flash-msg
+      block content
+
+
+    include ./_partials/_footer

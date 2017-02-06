@@ -1,0 +1,66 @@
+extends ../layout
+
+block append head
+  link(rel='stylesheet',href='/css/login.css')
+
+
+block content
+  .row
+    col-sm-6.col-md-4.col-md-offset-4
+      h1.text-center.login-title=title
+      .login-panel
+        img.img-avatar(src="/img/avatar_signup.png"  alt="Avatar for signup new user")/
+        form.form-login(method='POST')
+
+          .form-group.required
+            label.ctrl-label(for='email') Email address :
+            if(errors && errors.email)
+              span#helpBlock.help-block.text-danger=errors.email.msg
+            .input-group(class=errors && errors.email? 'has-error':undefined)
+              .input-group-addon
+                i.fa.fa-at(aria-hidden="true")
+              input.form-control#email(
+                    type="email"
+                    name='email'
+                    placeholder="Email"
+                    value=input && input.email? input.email.value:undefined
+                    required autofocus)
+
+          .form-group.required
+            label.ctrl-label(for='pwd') Password :
+            if(errors && errors.pwd)
+              span#helpBlock.help-block.text-danger=errors.pwd.msg
+            .input-group(class=errors && errors.pwd? 'has-error':undefined)
+              .input-group-addon
+                i.fa.fa-lock(aria-hidden="true")
+              input.form-control#pwd(
+                    type="password"
+                    name="pwd"
+                    placeholder="Password"
+                    value=input && input.pwd? input.pwd.value:undefined
+                    required)
+
+
+          .form-group.required
+            label.ctrl-label(for='pwd2') Comfirm Password :
+            if(errors && errors.pwd2)
+              span#helpBlock.help-block.text-danger=errors.pwd2.msg
+            .input-group(class=errors && errors.pwd2? 'has-error':undefined)
+              .input-group-addon
+                i.fa.fa-lock(aria-hidden="true")
+              input.form-control#pwd(
+                    type="password"
+                    name="pwd2"
+                    placeholder="Password again ... "
+                    value=input && input.pwd2? input.pwd2.value:undefined
+                    required)
+          .checkbox.pull-left
+            label
+              input( required type="checkbox" name="agree"  value="true" class=errors && errors.agree? 'has-error':undefined)
+              | Read & agree to the Terms of service and Privacy policy
+
+          .form-group
+            button.btn.btn-lg.btn-success.btn-block(type="submit") Sign up
+            hr
+            a.btn.btn-lg.btn-primary.btn-block(href='/public/login') Already registred
+

@@ -1,0 +1,54 @@
+
+.col-sm-6.col-md-4
+  .thumbnail
+    if(client.logo)
+      img.img-rounded(alt='Logo of '+client.name, src=client.logo, data-holder-rendered='true')
+    else
+      img.img-rounded(alt='Default logo for registred api', height="300" width="300"  src='/img/api.png')
+    .caption
+      h3.text-left Client :
+        | #[code.to-copy=client.id]
+      h3.text-left Name :
+        small
+          a.btn(
+              href="app/"+client.id+"?action=edit"
+              title="Edit "
+              style="word-break: break-all;"
+          )=client.name
+
+      h3 Redirect URI &nbsp;
+      pre.to-copy(style="word-break:break-all; overflow:hidden;")=client.redirectUri
+      br
+      p(style="width: 20em; overflow:hidden;text-overflow: ellipsis;white-space:nowrap;")=client.description
+
+      p
+        button.btn.btn-info.btn-block.hidden#btnToggleSecret Click to display your secret key
+        .well.well-sm.to-copy(
+          style="word-break: break-all;color:#6B1119;border: 2px dashed #c7254e",
+          title="CONFIDENTIAL - Your secret"
+        )=client.secret
+      hr
+
+      p
+        .row
+          .col-xs-3
+            a.btn.btn-success(href="app/"+client.id+"?action=edit" title="Edit ")
+              span.fa.fa-pencil(aria-hidden="true")
+          .col-xs-3
+            button.btn.btn-warning.reset(title="Reset token" data-link="app/"+client.id+"?action=reset" data-toggle="modal" data-target="#confirmReset")
+              span.fa.fa-refresh
+          .col-xs-3
+            button.btn.btn-danger.delete(title="Delete" data-link="app/"+client.id+"?action=delete" data-toggle="modal" data-target="#confirmDelete")
+              span.fa.fa-trash
+          .col-xs-3
+            .dropdown.dropdown-menu-right.clearfix
+              button.btn.btn-primary.dropdown-toggle(title="Export to" type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+                i.fa.fa-download(aria-hidden='true')
+              ul.dropdown-menu(aria-labelledby='dropdownMenu3')
+                // li.dropdown-header Dropdown header
+                li
+                  a(href="app/"+client.id+"?action=export&to=json")
+                    span.fa.fa-file-text-o  Export to .json
+                li
+                  a(href="app/"+client.id+"?action=export&to=env")
+                    span.fa.fa-file-code-o  Export to .env

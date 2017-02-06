@@ -1,0 +1,37 @@
+extends ./layout
+
+block content
+  .row.clearfix
+    h1.page-header=title
+
+    h2.text-warning Few important principles
+    p
+      ol
+        li First of all, you need, no MUST understand English. It's not necessary to speak (well),
+          |  just understand what you're reading.
+        li The DOC is your friend, firstly the doc and as a last resort, go see Google or StackOverFlow.
+        li Nobody give orders in the team. The chief is only paper role. I believe in human intelligence, so better use it.
+        li: a(href='http://rogerdudler.github.io/git-guide/' target='_blank') GIT Basics - a simple guide for getting started with git
+
+    h3 Back-end
+    p
+      | As we gonna use Node.JS, here some links to understand and be used to this awesome platform.
+      ul
+        li: a(href='https://www.youtube.com/playlist?list=PL55RiY5tL51oGJorjEgl6NVeDbx_fO5jR' target='_blank') Node.JS Basics with Express.JS
+        li: a(href='https://www.promisejs.org/' target='_blank') [Site] Promise instead of callback
+        li: a(href='https://youtu.be/swdWUWtGxR4' target='_blank') Promise - Examples
+        li
+          | Promise Why ? - #[a(href='https://youtu.be/9nwPenviboM' target='_blank')  Pt. 1]
+          a(href='https://youtu.be/RR0MoEoHb9U' target='_blank')  Pt. 2
+        li: a(href='https://www.youtube.com/playlist?list=PL5ze0DjYv5DYBDfl0vF_VRxEu8JdTIHlR' target='_blank') Sequelize - PostegreSQL ORM
+        li: a(href='https://youtu.be/gwrfXtC-y3k' target='_blank') Sequelize - Migrations
+        li: a(href='https://youtu.be/wHTBxtk8ezo' target='_blank') Sequelize - Migrations & Seeds
+
+    h3 Front-end
+    p
+      | It will be designed with AngularJS 2.
+      ul
+        li: a(href='https://www.youtube.com/playlist?list=PL55RiY5tL51rslbEyCA6Gm2mRQ9VJxAYh' target='_blank') Make an Angular 2 Weather App
+        li: a(href='https://youtu.be/Gn8FEdVtM18' target='_blank') TyeScript
+        li: a(href='https://www.youtube.com/playlist?list=PL55RiY5tL51rLeDxRPlE6Hsnss3QDCCKc' target='_blank') (Optionnal) Angular 2 - More explanations on each features
+        li: a(href='https://material.angular.io/' target='_blank') (Optionnal) Angular Material to make it pretty and pro

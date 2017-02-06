@@ -1,0 +1,37 @@
+extends ./layout
+
+block content
+  - msg = (err) ? err.message : msg
+  - status = (err) ? err.status : status
+  - statusDef = (err) ? err.statusDef : statusDef
+  .row
+    h1=msg
+    p=status
+    p= (statusDef) ? statusDef : 'Some error occured during process. Please correct those '
+
+    br
+    br
+
+    input#redirectTo(type="hidden", value=err.redirectTo)
+    unless (errors)
+      h2 #[u More details on errors]
+      .list-group
+        each error, param in ((errors) ? errors : [])
+          a.list-group-item.danger(href='#')
+            h3.list-group-item-heading="Error on param : " + param
+            p.list-group-item-text
+              dl.dl-horizontal
+                dt Error msg
+                dd=error.msg
+                dt Param sent
+                dd=error.param
+                dt Param sent
+                dd=error.param
+
+                dt Param values received
+                dd=error.value || 'Nothing received as value'
+
+
+
+  script(type='text/javascript').
+    console.log('Koil errror')

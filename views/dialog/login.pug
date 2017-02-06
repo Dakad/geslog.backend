@@ -1,0 +1,34 @@
+
+form.form-horizontal(action="grant/user"+query method="POST")
+  fieldset
+    legend Identify yourself
+
+    input.form-control(name='clientId', type="hidden", value=client.id,)
+    input.form-control(name='clientSecret', type="hidden", value=client.secret,)
+
+    .form-group
+      label.col-lg-3.control-label(for="email") Email
+      .col-lg-9
+        input#email.form-control(name='email', type="email", required, placeholder="Your email",)
+
+    .form-group
+      label.col-lg-3.control-label(for="pwd") Password
+      .col-lg-9
+        input#pwd.form-control(name='pwd', type="password", required, placeholder="Your password")
+
+    .form-group
+      label.col-lg-3.control-label(for="appUri") Permanent ?
+      .col-lg-9
+        .checkbox
+          label
+            input(type="checkbox",,name="rememberMe",value="true")
+            |Grant constantly ?
+
+        span.help-block By defaut, the access expires in 3 months.
+
+
+    .form-group
+      .col-lg-9.col-lg-offset-3
+        button.btn.btn-success.btn(type="submit") Log in
+
+

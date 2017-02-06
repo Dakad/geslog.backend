@@ -1,0 +1,16 @@
+extends ./layout
+
+
+block content
+  .row.clearfix
+    if (!isAuth | !user)
+      .col-md-5
+        include ./dialog/login
+
+    .col-md-6.col-md-offset-1
+      if(client && client.logo)
+        include ./dialog/grant-alt
+      else
+        include ./dialog/grant
+
+

@@ -1,0 +1,33 @@
+
+.panel.panel-primary
+  .panel-heading.clearfix
+    label.panel-title=client.name || "Client "+client.id
+    .btn-group.pull-right
+      a.btn.btn-success(href="app/"+client.id+"?action=edit") Edit
+      button.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown')
+        span.caret
+      ul.dropdown-menu(role='menu')
+        li
+          button.btn.btn-lg.btn-link#reset(data-link="app/"+client.id+"?action=reset" data-toggle="modal" data-target="#confirmReset")
+            span.fa.fa-refresh  Reset token
+        li
+          button.btn.btn-lg.btn-link#delete(data-link="app/"+client.id+"?action=delete" data-toggle="modal" data-target="#confirmDelete")
+            span.fa.fa-trash  Delete
+        li.divider
+        li
+          a(href="app/#{client.id}?action=export&to=json")
+            span.fa.fa-file-text-o  Export to .json
+        li
+          a(href="app/#{client.id}?action=export&to=env")
+            span.fa.fa-file-code-o  Export to .env
+  .panel-body
+    h3 Your Client ID :
+      code.to-copy=client.id
+    h3 Your Client Name :
+      code.to-copy=client.name
+    h3 Your Client Callback URL :
+      code.to-copy=client.redirectUri
+    h3 Your secret key #{'for '+client.name}:
+      .well.well-sm.to-copy=client.secret
+    h3 Your access token :
+      .well.well-sm.to-copy=client.accessToken
