@@ -8,7 +8,7 @@ This end use Express for the server and Sequelize as ORM for PostgreSQL.
 # Before started
 
 You must set the config of the app. I used an `.env` file as config files. It's much secured than .json files
-The variables set in the `.env` files will loaded in put inte process.env of Node.JS, accessible anywhere in the backend.
+The variables set in the `.env` files will be loaded and put in the process.env of Node.JS, accessible anywhere in the backend.
 
 
 Example of `.env` file
@@ -34,7 +34,7 @@ The first config concerns the DB, for that , you must set :
 * `DATABASE_URL`= The URL containning all infos necessary to connect to the DB. If not set, collect others DATABASE_*** var in the `.env` file
 * `DATABASE_USER`= The DB user to connect as
 * `DATABASE_PASSWORD`= The User password, Make sure this file is not public, otherwise your DB is compromised
-* `DATABASE_SEVER`: The URL to the DB server
+* `DATABASE_SERVER`: The URL to the DB server
 * `DATABASE_PORT`: The DB server port, by default this var is set to `5432`
 * `DATABASE_NAME`: The DB name, not the schema name
 * `DATABASE_SCHEMA`: The DB schema to use
