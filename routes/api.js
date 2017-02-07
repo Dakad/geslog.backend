@@ -20,12 +20,12 @@
 /**
  * Load modules dependencies.
  */
- // Built-in
+// Built-in
 
- // npm
+// npm
 const _ = require('lodash');
 const nconf = require('nconf');
-const router    = require('express').Router();
+const router = require('express').Router();
 const jwt = require('express-jwt');
 
 
@@ -38,48 +38,52 @@ let _dependencies = {};
 // Use authCtrl.checkAuth as middleware && put before all non-GET methods
 
 
-router.inject = function inject (options){
+router.inject = function inject(options) {
 
-    if(!options){
+    if (!options) {
         throw new InjectError('all dependencies', 'apiRoute.inject()');
     }
 
-    if(!options.dal) {
+    if (!options.dal) {
         throw new InjectError('dal', 'apiRoute.inject()');
     }
 
-    if(!options.ctrlers) {
+    if (!options.ctrlers) {
         throw new InjectError('ctrlers', 'apiRoute.inject()');
     }
 
-    if(!_.has(options,'ctrlers.api') ) {
+    if (!_.has(options, 'ctrlers.api')) {
         throw new InjectError('ctrlers.api', 'apiRoute.inject()');
     }
 
-    if(!_.has(options,'ctrlers.auth') ) {
+    if (!_.has(options, 'ctrlers.auth')) {
         throw new InjectError('ctrlers.auth', 'apiRoute.inject()');
     }
 
     // Clone the options into my own _dependencies
-    _dependencies = _.assign(_dependencies,options);
+    _dependencies = _.assign(_dependencies, options);
 };
 
 
 
 
-router.init = function init(){
+router.init = function init() {
 
     /* Default response to /api on every method {GET,POST, PUT, DELETE} */
-    router.use('/', function(req, res, next) {
-      res.json('Where are you going ? Nothing there :-( .');
+
+
+    router.all('/zen', _dependencies.ctrlers.api.zen);
+
+    router.post('/login', _dependencies.ctrlers.api.login);
+
+    router.post('/logins', _dependencies.ctrlers.api.listLogins);
+
+
+
+    router.use(function(err, req, res, next) {
+        console.error(err.stack);
+        res.status(500).send('Something went to shit ! Go check your console _');
     });
-
-
-    router.all('/zen',_dependencies.ctrlers.api.zen);
-
-
-
-
 };
 
 

@@ -41,35 +41,35 @@ const AppsDAO = require('./db/dao/apps');
 // Routes
 const apiRoute = require('./routes/api');
 const authRoute = require('./routes/auth');
-const defRoute = require('./routes/public');
+// const defRoute = require('./routes/public');
 
 // Ctrlers
 const apiCtrler = require('./ctrlers/api');
 const authCtrler = require('./ctrlers/auth');
-const publicCtrler = require('./ctrlers/public');
+// const publicCtrler = require('./ctrlers/public');
 const renderCtrler = require('./ctrlers/render');
 
 
 // Used as DI Container
 const _dependencies = {
-  logger: Logger,
-  routes: {
-    'index' : { 'url' : '/',      src : defRoute},
-    'public': { 'url' : '/public',src : defRoute},
-    'api' :   { 'url' : '/api',   src : apiRoute},
-    'auth' :  { 'url' : '/auth',  src : authRoute}
-  },
-  ctrlers: {
-    'api' : apiCtrler,
-    'auth': authCtrler,
-    'public': publicCtrler,
-    'render': renderCtrler
-  },
-  dal: DAL,
-  daos: {
-    'users' : UsersDAO,
-    'apps'  : AppsDAO
-  },
+    logger: Logger,
+    routes: {
+        // 'index': { 'url': '/', src: defRoute },
+        // 'public': { 'url': '/public', src: defRoute },
+        'api': { 'url': '/api', src: apiRoute },
+        'auth': { 'url': '/auth', src: authRoute }
+    },
+    ctrlers: {
+        'api': apiCtrler,
+        'auth': authCtrler,
+        // 'public': publicCtrler,
+        'render': renderCtrler
+    },
+    dal: DAL,
+    daos: {
+        'users': UsersDAO,
+        'apps': AppsDAO
+    },
 };
 
 
@@ -97,7 +97,7 @@ Logger.info('[App] apiCtrler injected');
 authCtrler.inject(_dependencies);
 Logger.info('[App] authCtrler injected');
 
-publicCtrler.inject(_dependencies);
+// publicCtrler.inject(_dependencies);
 Logger.info('[App] publicCtrler injected');
 
 
@@ -107,7 +107,7 @@ Logger.info('[App] apiRoute injected');
 authRoute.inject(_dependencies);
 Logger.info('[App] authRoute injected');
 
-defRoute.inject(_dependencies);
+// defRoute.inject(_dependencies);
 Logger.info('[App] defRoute injected');
 
 
@@ -116,15 +116,15 @@ Logger.info('[App] D.I completed');
 
 // Begin the real init. of the app
 Config.load(_dependencies.logger)
-  .then(DAL.initConnection)
-  .then(() => Server.configServer(_dependencies)) // Only need the logger
-  .then(() => Server.configRoutes(_dependencies))
-  .then(Server.start)
-  .then(() => Logger.info('[App] Application ready !!!'))
-  .catch(function(err) {
-    Logger.error(err);
-    Server.stop();
-  });
+    .then(DAL.initConnection)
+    .then(() => Server.configServer(_dependencies)) // Only need the logger
+    .then(() => Server.configRoutes(_dependencies))
+    .then(Server.start)
+    .then(() => Logger.info('[App] Application ready !!!'))
+    .catch(function(err) {
+        Logger.error(err);
+        Server.stop();
+    });
 
 
 

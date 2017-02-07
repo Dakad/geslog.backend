@@ -25,12 +25,12 @@
 /**
  * Load modules dependencies.
  */
- // Built-in
+// Built-in
 
- // npm
+// npm
 const _ = require('lodash');
 
- // Custom -Mine
+// Custom -Mine
 const Util = require('../modules/util');
 const ApiError = require('../modules/api-error');
 const DB = require('../db/dal');
@@ -57,32 +57,84 @@ let _dependencies = {};
  *
  */
 
-apiCtrler.inject = function inject (opts) {
+apiCtrler.inject = function inject(opts) {
 
-    if(!opts){
+    if (!opts) {
         throw new InjectError('all dependencies', 'renderCtrler.inject()');
     }
 
 
     // Clone the options into my own _dependencies
-    _dependencies = _.assign(_dependencies,opts);
+    _dependencies = _.assign(_dependencies, opts);
 
 };
 
 
 
-const sendJsonResponse = function (res,statut,data){
-    res.status(statut).json(data);
+
+const sendJsonResponse = function(res, resStatut, resData) {
+    const resObj = {
+        "data": resData,
+        "err": {},
+        "status": resStatut
+    };
+    res.status(resObj.status).json(resObj);
+};
+
+
+const sendJsonError = function(res, err) {
+    const resObj = {
+        "data": {},
+        "err": err,
+        "status": err.status
+    };
+    res.status(resObj.status).json(resObj);
 };
 
 
 
 
-apiCtrler.zen = function zen(req,res,next){
-    return sendJsonResponse(res,200, 'Hello, I\' will soon give u some deep shit quotes ! Just wait for it !');
+apiCtrler.zen = function zen(req, res, next) {
+    return sendJsonResponse(res, 200, 'Hello, I\' will soon give u some deep shit quotes ! Just wait for it !');
+}
+
+apiCtrler.login = function login(req, res, next) {
+    // Check if user exists
+    // If exists, generate Token
+
+    return sendJsonResponse(res, 200, { "token": "user-todsfdfsdferqoijken", "type": "user-type" });
 }
 
 
+apiCtrler.listLogins = function listLogins(req, res, next) {
+    console.log("LOOOOOOOGISN");
+    // REcup matricule from body
+    let matricule = req.body.matricule;
+    if (!matricule) {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : matricule'));
+    }
+
+    // Go find this user with this matricule
+    _dependencies.dal.Users.find({
+        where: { 'matricule': matricule }
+    }, {
+        include: [{
+            model: _dependencies.dal.Applications,
+            as: 'applications'
+        }, {
+            model: _dependencies.dal.Access,
+            as: 'access'
+        }]
+    }).then(function(logins) {
+        if (!logins) {
+            logins = {};
+        }
+        return sendJsonResponse(res, 200, JSON.stringify(logins));
+    })
+
+
+
+};
 
 
 

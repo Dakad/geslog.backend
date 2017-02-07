@@ -200,9 +200,9 @@ Server.configRoutes = function configRoutes(options) {
             throw new InjectError('authCtrler', 'Server.configRoutes()');
         }
 
-        if (!_.has(_dependencies, 'ctrlers.public')) {
-            throw new InjectError('publicCtrler', 'Server.configRoutes()');
-        }
+        // if (!_.has(_dependencies, 'ctrlers.public')) {
+        //     throw new InjectError('publicCtrler', 'Server.configRoutes()');
+        // }
 
         logger.info('[Server - Routes] Init the app(Express) with route for : ', routes.api.url);
         _app.use(routes.api.url, routes.api.src);
@@ -214,10 +214,10 @@ Server.configRoutes = function configRoutes(options) {
         routes.auth.src.init();
 
 
-        logger.info('[Server - Routes] Init the app(Express) with route for : ', routes.index.url, routes.public.url);
-        _app.use(routes.public.url, routes.public.src);
-        _app.use(routes.index.url, routes.index.src);
-        routes.index.src.init();
+        // logger.info('[Server - Routes] Init the app(Express) with route for : ', routes.index.url, routes.public.url);
+        // _app.use(routes.public.url, routes.public.src);
+        // _app.use(routes.index.url, routes.index.src);
+        // routes.index.src.init();
 
         logger.info('[Server - Routes] Init done !');
 
@@ -235,37 +235,37 @@ Server.configRoutes = function configRoutes(options) {
  *		- Notify the callback
  *
  */
-Server.start = function start (cb) {
+Server.start = function start(cb) {
 
     return new Promise(function(fulfill) {
-            // Hold the instance of server
-            Server.instance = _app.listen(nconf.get('APP_PORT'));
+        // Hold the instance of server
+        Server.instance = _app.listen(nconf.get('APP_PORT'));
 
-            Server.instance.on('listening', function() {
-                _dependencies.logger.info('[Server] Web server listening on Port', getBindedServerPort());
-            });
+        Server.instance.on('listening', function() {
+            _dependencies.logger.info('[Server] Web server listening on Port', getBindedServerPort());
+        });
 
-            Server.instance.on('close', Server.stop);
-            Server.instance.on('error', function onError(error) {
-                if (error.syscall !== 'listen') {
-                    throw error;
-                }
+        Server.instance.on('close', Server.stop);
+        Server.instance.on('error', function onError(error) {
+            if (error.syscall !== 'listen') {
+                throw error;
+            }
 
-                // handle specific listen errors with friendly messages
-                switch (error.code) {
-                    case 'EACCES':
-                        onError(new Error('Port :' + getBindedServerPort() + ' requires elevated privileges.\n', error));
-                        break;
-                    case 'EADDRINUSE':
-                        onError(new Error('Port :' + getBindedServerPort() + ' is already in use.\n', error));
-                        break;
-                    default:
-                        onError(error);
-                }
-            });
+            // handle specific listen errors with friendly messages
+            switch (error.code) {
+                case 'EACCES':
+                    onError(new Error('Port :' + getBindedServerPort() + ' requires elevated privileges.\n', error));
+                    break;
+                case 'EADDRINUSE':
+                    onError(new Error('Port :' + getBindedServerPort() + ' is already in use.\n', error));
+                    break;
+                default:
+                    onError(error);
+            }
+        });
 
-            fulfill();
-        }).nodeify(cb); // Change this sh*t function into good Promise
+        fulfill();
+    }).nodeify(cb); // Change this sh*t function into good Promise
 };
 
 
@@ -283,7 +283,7 @@ Server.stop = function() {
         _dependencies.logger.warn(logMsg, getBindedServerPort());
         process.exit();
     } else {
-        logMsg ='[Server] Cannot stop web server not yet still listening on :' ;
+        logMsg = '[Server] Cannot stop web server not yet still listening on :';
         _dependencies.logger.error(logMsg, getBindedServerPort());
     }
 };

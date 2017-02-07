@@ -95,6 +95,7 @@ function initSequelize() {
                 DB[model.name] = model;
             });
     }).then(function() {
+        // console.log(Object.keys(DB));
         Object.keys(DB).forEach(function(modelName) {
             // Apply any relations between each model (if any).
             if (modelName.toLowerCase() !== 'sequelize' && DB[modelName].associate)
@@ -106,23 +107,27 @@ function initSequelize() {
 
 
 DB.initConnection  = function connect() {
-    return initSequelize().then(function(){
+    return initSequelize()
+            .catch(function(err) {
+                console.log(err.stack);
+            throw new Error('[DB] Unable to connect to the DB - ' + err.message);
+        })
+    .then(function(){
             const nbPool = nconf.get('DB_CONFIG').pool.min + ' - ' + nconf.get('DB_CONFIG').pool.max;
             _dependencies.logger.info('[DB] Init the DB with the pool : Client  Min - MAX. ', nbPool);
             return  DB.sequelize.authenticate();
         }).then(() => DB.sequelize.showAllSchemas({logging:false}))
+
         .then(function(schemas){
             if(schemas.indexOf(nconf.get('DATABASE_SCHEMA'))<0) // No schema with DB_SCHEMA
                 return DB.sequelize.createSchema(nconf.get('DATABASE_SCHEMA'));
         })
-        .then(() =>DB.sequelize.sync()) // Create all tables if they doesn't exist in database
-        // .then(function() {DB.sequelize.sync({force:true})}) // DROP TABLES before CREATE
+        // .then(() =>DB.sequelize.sync()) // Create all tables if they doesn't exist in database
+        .then(function() {DB.sequelize.sync({force:true})}) // DROP TABLES before CREATE
         .then(function() {
             const urlDB = nconf.get('DATABASE_USER') +'@'+nconf.get('DATABASE_SERVER')+  '~'+nconf.get('DATABASE_NAME');
             _dependencies.logger.info('[DB] Connection has been established successfully to :',urlDB);
-        }).catch(function(err) {
-            throw new Error('[DB] Unable to connect to the DB - ' + err.message);
-        });
+        })
 };
 
 

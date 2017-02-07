@@ -1,3 +1,5 @@
+
+/*
 'use strict';
 
 const nconf = require("nconf");
@@ -53,3 +55,5 @@ const AuthAppsModel = function(sequelize, DataTypes) {
 
 
 module.exports = AuthAppsModel;
+
+*/
