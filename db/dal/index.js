@@ -48,7 +48,7 @@ const DB = {
 };
 // Injected
 let _dependencies = {};
-const pathToModel = path.join(__dirname,'..','models');
+const pathToModel = path.join(__dirname, '..', 'models');
 
 
 
@@ -60,9 +60,9 @@ const pathToModel = path.join(__dirname,'..','models');
  * @parameter   {Object}    opts    Contains all dependencies needed by ths modules
  *
  */
-DB.inject = function inject (opts) {
+DB.inject = function inject(opts) {
 
-    if(!opts){
+    if (!opts) {
         throw new InjectError('all dependencies', 'renderCtrler.inject()');
     }
 
@@ -72,7 +72,7 @@ DB.inject = function inject (opts) {
 
 
     // Clone the options into my own _dependencies
-    _dependencies = _.assign(_dependencies,opts);
+    _dependencies = _.assign(_dependencies, opts);
 
 };
 
@@ -86,17 +86,17 @@ function initSequelize() {
         });
     }).then(function(files) {
         files.filter(function(file) {
-                // Check : not hidden files && .js file
-                return ((file.indexOf('.') !== 0) && (path.extname(file) === '.js'));
-            }).forEach(function(file) {
-                // Grab all the model files from the current directory, import && add into DB
-                let model = DB.sequelize['import'](path.join(pathToModel, file));
-                // Add them to the db object,
-                DB[model.name] = model;
-            });
+            // Check : not hidden files && .js file
+            return ((file.indexOf('.') !== 0) && (path.extname(file) === '.js'));
+        }).forEach(function(file) {
+            // Grab all the model files from the current directory, import && add into DB
+            let model = DB.sequelize['import'](path.join(pathToModel, file));
+            // Add them to the db object,
+            DB[model.name] = model;
+        });
     }).then(function() {
         // console.log(Object.keys(DB));
-        Object.keys(DB).forEach(function(modelName) {
+        Object.keys(DB).reverse().forEach(function(modelName) {
             // Apply any relations between each model (if any).
             if (modelName.toLowerCase() !== 'sequelize' && DB[modelName].associate)
                 DB[modelName].associate(DB);
@@ -106,27 +106,27 @@ function initSequelize() {
 }
 
 
-DB.initConnection  = function connect() {
+DB.initConnection = function connect() {
     return initSequelize()
-            .catch(function(err) {
-                console.log(err.stack);
+        .catch(function(err) {
+            console.log(err.stack);
             throw new Error('[DB] Unable to connect to the DB - ' + err.message);
         })
-    .then(function(){
+        .then(function() {
             const nbPool = nconf.get('DB_CONFIG').pool.min + ' - ' + nconf.get('DB_CONFIG').pool.max;
             _dependencies.logger.info('[DB] Init the DB with the pool : Client  Min - MAX. ', nbPool);
-            return  DB.sequelize.authenticate();
-        }).then(() => DB.sequelize.showAllSchemas({logging:false}))
+            return DB.sequelize.authenticate();
+        }).then(() => DB.sequelize.showAllSchemas({ logging: false }))
 
-        .then(function(schemas){
-            if(schemas.indexOf(nconf.get('DATABASE_SCHEMA'))<0) // No schema with DB_SCHEMA
+    .then(function(schemas) {
+            if (schemas.indexOf(nconf.get('DATABASE_SCHEMA')) < 0) // No schema with DB_SCHEMA
                 return DB.sequelize.createSchema(nconf.get('DATABASE_SCHEMA'));
         })
-        // .then(() =>DB.sequelize.sync()) // Create all tables if they doesn't exist in database
-        .then(function() {DB.sequelize.sync({force:true})}) // DROP TABLES before CREATE
+        .then(() => DB.sequelize.sync()) // Create all tables if they doesn't exist in database
+        // .then(function() { DB.sequelize.sync({ force: true }) }) // DROP TABLES before CREATE
         .then(function() {
-            const urlDB = nconf.get('DATABASE_USER') +'@'+nconf.get('DATABASE_SERVER')+  '~'+nconf.get('DATABASE_NAME');
-            _dependencies.logger.info('[DB] Connection has been established successfully to :',urlDB);
+            const urlDB = nconf.get('DATABASE_USER') + '@' + nconf.get('DATABASE_SERVER') + '~' + nconf.get('DATABASE_NAME');
+            _dependencies.logger.info('[DB] Connection has been established successfully to :', urlDB);
         })
 };
 

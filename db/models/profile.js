@@ -12,7 +12,7 @@ const ProfilModel = function(sequelize, DataTypes) {
 
     }, {
         schema: nconf.get('DATABASE_SCHEMA') || 'public',
-        classMethod: {
+        classMethods: {
             associate: function(models) {
                 Profil.belongsToMany(models.Applications, {
                     foreignKey: 'idProfil',
@@ -23,6 +23,8 @@ const ProfilModel = function(sequelize, DataTypes) {
             }
         }
     });
+
+
     return Profil;
 }
 

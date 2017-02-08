@@ -6,7 +6,7 @@ const Util = require('../../modules/util');
 
 
 const UserModel = function(sequelize, DataTypes) {
-    const User = sequelize.define('Users', {
+    const Users = sequelize.define('Users', {
         firstName: {
             type: DataTypes.STRING,
             allowNull: false
@@ -60,19 +60,17 @@ const UserModel = function(sequelize, DataTypes) {
         schema: nconf.get('DATABASE_SCHEMA') || 'public',
 
 
-        classMethod: {
+        classMethods: {
             associate: function(models) {
-                Users.belongsTo(model.Profil, {
+                Users.belongsTo(models.Profiles, {
                     foreignKey: {
-                        name: 'idProfil',
                         allowNull: true,
-                        primaryKey: true
+                        name: 'profileId'
                     }
-
                 });
 
                 Users.belongsToMany(models.Applications, {
-                    foreignKey: 'idUser', // Will create a FK in Apps named 'owner'
+                    foreignKey: 'userId', // Will create a FK in Apps named 'owner'
                     onDelete: "CASCADE", // If the box is deleted, don't keep any record of it. JUST DELETE
                     as: 'apps', // The FK in Apps will be aliased as 'owner'.
                     through: models.Accesses
@@ -85,7 +83,7 @@ const UserModel = function(sequelize, DataTypes) {
             }
         }
     });
-    return User;
+    return Users;
 };
 
 module.exports = UserModel;
