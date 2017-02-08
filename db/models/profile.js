@@ -6,10 +6,10 @@ const Util = require('../../modules/util');
 
 const ProfilModel = function(sequelize, DataTypes) {
     const Profil = sequelize.define('Profiles', {
-
         name: {
             type: DataTypes.STRING
         }
+
     }, {
         schema: nconf.get('DATABASE_SCHEMA') || 'public',
         classMethod: {

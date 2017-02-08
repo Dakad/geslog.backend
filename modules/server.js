@@ -196,28 +196,11 @@ Server.configRoutes = function configRoutes(options) {
             throw new InjectError('apiCtrler', 'Server.configRoutes()');
         }
 
-        if (!_.has(_dependencies, 'ctrlers.auth')) {
-            throw new InjectError('authCtrler', 'Server.configRoutes()');
-        }
-
-        // if (!_.has(_dependencies, 'ctrlers.public')) {
-        //     throw new InjectError('publicCtrler', 'Server.configRoutes()');
-        // }
 
         logger.info('[Server - Routes] Init the app(Express) with route for : ', routes.api.url);
         _app.use(routes.api.url, routes.api.src);
         routes.api.src.init();
 
-
-        logger.info('[Server - Routes] Init the app(Express) with route for : ', routes.auth.url);
-        _app.use(routes.auth.url, routes.auth.src);
-        routes.auth.src.init();
-
-
-        // logger.info('[Server - Routes] Init the app(Express) with route for : ', routes.index.url, routes.public.url);
-        // _app.use(routes.public.url, routes.public.src);
-        // _app.use(routes.index.url, routes.index.src);
-        // routes.index.src.init();
 
         logger.info('[Server - Routes] Init done !');
 

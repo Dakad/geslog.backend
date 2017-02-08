@@ -51,9 +51,6 @@ const UserModel = function(sequelize, DataTypes) {
         },
         password: {
             type: DataTypes.STRING
-        },
-        salt: {
-            type: DataTypes.STRING
         }
     }, {
         paranoid: true,

@@ -45,25 +45,16 @@ const authRoute = require('./routes/auth');
 
 // Ctrlers
 const apiCtrler = require('./ctrlers/api');
-const authCtrler = require('./ctrlers/auth');
-// const publicCtrler = require('./ctrlers/public');
-const renderCtrler = require('./ctrlers/render');
 
 
 // Used as DI Container
 const _dependencies = {
     logger: Logger,
     routes: {
-        // 'index': { 'url': '/', src: defRoute },
-        // 'public': { 'url': '/public', src: defRoute },
         'api': { 'url': '/api', src: apiRoute },
-        'auth': { 'url': '/auth', src: authRoute }
     },
     ctrlers: {
         'api': apiCtrler,
-        'auth': authCtrler,
-        // 'public': publicCtrler,
-        'render': renderCtrler
     },
     dal: DAL,
     daos: {
@@ -94,11 +85,6 @@ Logger.info('[App] AppsDAO injected');
 apiCtrler.inject(_dependencies);
 Logger.info('[App] apiCtrler injected');
 
-authCtrler.inject(_dependencies);
-Logger.info('[App] authCtrler injected');
-
-// publicCtrler.inject(_dependencies);
-Logger.info('[App] publicCtrler injected');
 
 
 apiRoute.inject(_dependencies);
@@ -107,8 +93,6 @@ Logger.info('[App] apiRoute injected');
 authRoute.inject(_dependencies);
 Logger.info('[App] authRoute injected');
 
-// defRoute.inject(_dependencies);
-Logger.info('[App] defRoute injected');
 
 
 Logger.info('[App] D.I completed');
