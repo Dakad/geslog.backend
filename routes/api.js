@@ -73,7 +73,7 @@ router.init = function init() {
 
     router.post('/connect', _dependencies.ctrlers.api.connect);
 
-    router.post('/logins', _dependencies.ctrlers.api.listLogins);
+    router.get('/logins/:matricule', _dependencies.ctrlers.api.listLogins);
 
     router.post('/user', _dependencies.ctrlers.api.addUser);
 
@@ -81,10 +81,18 @@ router.init = function init() {
 
     router.post('/access', _dependencies.ctrlers.api.addProfiles);
 
-    router.get('/profil(/:name)?', _dependencies.ctrlers.api.getProfil)
+    router.get('/profil', _dependencies.ctrlers.api.getProfil)
         .post('/profil', _dependencies.ctrlers.api.setProfil)
-        //            .delete('/profil',_dependencies.ctrlers.api.deleteProfil);
+        .delete('/profil', _dependencies.ctrlers.api.deleteProfil);
+    router.get('/profil', _dependencies.ctrlers.api.getProfil)
+        .post('/profil', _dependencies.ctrlers.api.setProfil)
+        .delete('/profil', _dependencies.ctrlers.api.deleteProfil);
 
+    router.get('/app', _dependencies.ctrlers.api.getApp)
+        .post('/app', _dependencies.ctrlers.api.setApp)
+        .delete('/app', _dependencies.ctrlers.api.deleteApp);
+
+    router.get('/users', _dependencies.ctrlers.api.listUsers);
 
     router.use(function(err, req, res, next) {
         console.error(err.stack);

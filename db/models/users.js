@@ -10,6 +10,7 @@ const UserModel = function(sequelize, DataTypes) {
         firstName: {
             type: DataTypes.STRING,
             allowNull: false
+
         },
         name: {
             type: DataTypes.STRING,
@@ -60,12 +61,14 @@ const UserModel = function(sequelize, DataTypes) {
         schema: nconf.get('DATABASE_SCHEMA') || 'public',
 
 
+
         classMethods: {
             associate: function(models) {
                 Users.belongsTo(models.Profiles, {
                     foreignKey: {
                         allowNull: true,
                         name: 'profileId'
+
                     }
                 });
 
