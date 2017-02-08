@@ -268,7 +268,10 @@ apiCtrler.deleteApp = function deleteApp(req,res,next){
 
 apiCtrler.listUsers = function listUsers(req,res,next){
     _dependencies.dal.Users.findAll({
-        where:{'type':'student'}
+        include: [{
+            model: _dependencies.dal.Profiles,
+            as: 'profiles'
+        }]
     }).then(function(users)
     {
         return sendJsonResponse(res, 200, JSON.stringify(users));

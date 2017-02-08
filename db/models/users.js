@@ -6,7 +6,7 @@ const Util = require('../../modules/util');
 
 
 const UserModel = function(sequelize, DataTypes){
-   const User =  sequelize.define('Users', {
+   const Users =  sequelize.define('Users', {
         firstName :{
             type : DataTypes.STRING,
             allowNull : false
@@ -58,13 +58,13 @@ const UserModel = function(sequelize, DataTypes){
         schema: nconf.get('DATABASE_SCHEMA') || 'public',
 
 
-        classMethod : {
+        classMethods : {
             associate : function(models){
-                Users.belongsTo(model.Profil, {
+                Users.belongsTo(models.Profil, {
                     foreignKey : {
                         name : 'idProfil',
                         allowNull : true,
-                        primaryKey : true
+                        as:'profiles'
                     }
 
                 });
@@ -91,7 +91,7 @@ const UserModel = function(sequelize, DataTypes){
             }
     }
     });
-    return User;
+    return Users;
 };
 
 module.exports = UserModel;
