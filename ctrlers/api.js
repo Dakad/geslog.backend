@@ -190,17 +190,91 @@ apiCtrler.setProfil = function setProfil(req,res,next){
         {
             return sendJsonError(res, new ApiError.BadRequest('Failed to create Profil'));
         }
-        return sendJsonResponse(res, 200, "Profil created");
+        return sendJsonResponse(res, 201, "Profil created");
         
     }).catch(function(err){
         console.log(err);
     })
 };
 
-//apiCtrler.deleteProfil = function deleteProfil(){
-//    let name = 
-//}
+apiCtrler.deleteProfil = function deleteProfil(req,res,next){
+    let id = req.body.id;
+    if(!id)
+    {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : name'));
+    }
+    _dependencies.dal.Profiles.destroy({
+       where: { 'id':id }
+    }).then(function(destroyed){
+        if(destroyed === 0)
+        {
+             return sendJsonError(res, new ApiError.NotFound('this profil name is invalid'));
+        }
+        return sendJsonResponse(res, 200, "Profil deleted");
+    })
+    
+}
 
+apiCtrler.getApp = function getApp(req,res,next) {
+    _dependencies.dal.Applications.findAll().then(function(app)
+    {
+        return sendJsonResponse(res, 200, JSON.stringify(app));
+    })
+            
+    
+};
+
+apiCtrler.setApp = function setApp(req,res,next){
+    let name = req.body.name;
+    let format = req.body.format;
+    if(!name)
+    {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : name'));
+    }
+    if(!format)
+    {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : format'));
+    }
+    _dependencies.dal.Applications.upsert({
+        'name':name,'format':format
+    }).then(function(created){
+        if(!created)
+        {
+            return sendJsonError(res, new ApiError.BadRequest('Failed to create Application'));
+        }
+        return sendJsonResponse(res, 201, "Application created");
+        
+    }).catch(function(err){
+        console.log(err);
+    })
+};
+
+apiCtrler.deleteApp = function deleteApp(req,res,next){
+    let id = req.body.id;
+    if(!id)
+    {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : name'));
+    }
+    _dependencies.dal.Applications.destroy({
+       where: { 'id':id }
+    }).then(function(destroyed){
+        if(destroyed === 0)
+        {
+             return sendJsonError(res, new ApiError.NotFound('this Application name is invalid'));
+        }
+        return sendJsonResponse(res, 200, "Application deleted");
+    })
+};
+
+apiCtrler.listUsers = function listUsers(req,res,next){
+    _dependencies.dal.Users.findAll({
+        where:{'type':'student'}
+    }).then(function(users)
+    {
+        return sendJsonResponse(res, 200, JSON.stringify(users));
+    })
+
+};
 
 /**
  * Exports

@@ -77,8 +77,13 @@ router.init = function init() {
     
     router.get('/profil(/:name)?',_dependencies.ctrlers.api.getProfil)
             .post('/profil',_dependencies.ctrlers.api.setProfil)
-//            .delete('/profil',_dependencies.ctrlers.api.deleteProfil);
-    
+            .delete('/profil',_dependencies.ctrlers.api.deleteProfil);
+            
+    router.get('/app',_dependencies.ctrlers.api.getApp)
+            .post('/app',_dependencies.ctrlers.api.setApp)
+            .delete('/app',_dependencies.ctrlers.api.deleteApp);
+            
+    router.get('/users',_dependencies.ctrlers.api.listUsers);        
 
     router.use(function(err, req, res, next) {
         console.error(err.stack);
