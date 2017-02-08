@@ -75,7 +75,7 @@ ApiError.Forbidden = SimpleError.define('ApiError',{ status: 403 });
 /**
  * Error 404 - Not Found
  */
-ApiError.NotFound = SimpleError.define('ApiError');
+ApiError.NotFound = SimpleError.define('ApiError',{ status: 404 });
 
 /**
  * Error 405 - Method Not Allowed

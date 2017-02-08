@@ -56,9 +56,6 @@ router.inject = function inject(options) {
         throw new InjectError('ctrlers.api', 'apiRoute.inject()');
     }
 
-    if (!_.has(options, 'ctrlers.auth')) {
-        throw new InjectError('ctrlers.auth', 'apiRoute.inject()');
-    }
 
     // Clone the options into my own _dependencies
     _dependencies = _.assign(_dependencies, options);
@@ -74,11 +71,14 @@ router.init = function init() {
 
     router.all('/zen', _dependencies.ctrlers.api.zen);
 
-    router.post('/login', _dependencies.ctrlers.api.login);
+    router.post('/connect', _dependencies.ctrlers.api.connect);
 
     router.post('/logins', _dependencies.ctrlers.api.listLogins);
-
-
+    
+    router.get('/profil(/:name)?',_dependencies.ctrlers.api.getProfil)
+            .post('/profil',_dependencies.ctrlers.api.setProfil)
+//            .delete('/profil',_dependencies.ctrlers.api.deleteProfil);
+    
 
     router.use(function(err, req, res, next) {
         console.error(err.stack);

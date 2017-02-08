@@ -81,7 +81,7 @@ const sendJsonResponse = function(res, resStatut, resData) {
     res.status(resObj.status).json(resObj);
 };
 
-
+    
 const sendJsonError = function(res, err) {
     const resObj = {
         "data": {},
@@ -98,12 +98,30 @@ apiCtrler.zen = function zen(req, res, next) {
     return sendJsonResponse(res, 200, 'Hello, I\' will soon give u some deep shit quotes ! Just wait for it !');
 }
 
-apiCtrler.login = function login(req, res, next) {
+apiCtrler.connect = function connect(req, res, next) {
     // Check if user exists
     // If exists, generate Token
+	let password = req.body.password;
+	if(!password)
+	{
+		return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : passwd'));
+	}
+	
+	_dependencies.dal.Users.findOne({
+		where:{'password':password}
+	}).then(function(user)
+	{
+		if(!user)
+		{
+			return sendJsonError(res, new ApiError.NotFound("this passwd is invalid"));
+		}
+		return [Util.generateToken(user.type),user];
+	}).spread(function(token,user)
+	{
+		return sendJsonResponse(res, 200, { "token": token, "type": user.type ,"matricule": user.matricule});
+	})
+};
 
-    return sendJsonResponse(res, 200, { "token": "user-todsfdfsdferqoijken", "type": "user-type" });
-}
 
 
 apiCtrler.listLogins = function listLogins(req, res, next) {
@@ -131,12 +149,57 @@ apiCtrler.listLogins = function listLogins(req, res, next) {
         }
         return sendJsonResponse(res, 200, JSON.stringify(logins));
     })
-
-
-
 };
 
+apiCtrler.getProfil = function getProfil(req,res,next) {
+    let name = req.params.name;
+    //console.log(name);
+    if(name)
+    {
+       _dependencies.dal.Profiles.find({
+        where:{'name':name}
+        }).then(function(profil)
+        {
+            if(!profil)
+            {
+                return sendJsonError(res, new ApiError.NotFound('this profil name is invalid'));
+            }
+            return sendJsonResponse(res, 200, JSON.stringify(profil));
+        })
+    }
+    else
+    {
+    
+        _dependencies.dal.Profiles.findAll().then(function(profils)
+        {
+            return sendJsonResponse(res, 200, JSON.stringify(profils));
+        })
+    }
+};
 
+apiCtrler.setProfil = function setProfil(req,res,next){
+    let name = req.body.name;
+    if(!name)
+    {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : name'));
+    }
+    _dependencies.dal.Profiles.upsert({
+        'name':name
+    }).then(function(created){
+        if(!created)
+        {
+            return sendJsonError(res, new ApiError.BadRequest('Failed to create Profil'));
+        }
+        return sendJsonResponse(res, 200, "Profil created");
+        
+    }).catch(function(err){
+        console.log(err);
+    })
+};
+
+//apiCtrler.deleteProfil = function deleteProfil(){
+//    let name = 
+//}
 
 
 /**

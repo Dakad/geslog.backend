@@ -7,12 +7,9 @@ const Util = require('../../modules/util');
 const ProfilModel = function (sequelize, DataTypes){
     const Profil = sequelize.define('Profiles', {
 
-        year : {
-            type : DataTypes.STRING(2)
+        name : {
+            type : DataTypes.STRING
         },
-        orientation : {
-            type : DataTypes.STRING(3)
-        }
     }, {
         schema: nconf.get('DATABASE_SCHEMA') || 'public',
         classMethod : {

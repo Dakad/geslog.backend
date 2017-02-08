@@ -69,14 +69,6 @@ router.inject = function inject(options) {
         throw new InjectError('ctrlers.api', 'authRoute.inject()');
     }
 
-    if (!_.has(options, 'ctrlers.auth')) {
-        throw new InjectError('ctrlers.auth', 'apiRoute.inject()');
-    }
-
-    // if(!_.has(options,'ctrlers.public') ) {
-    //     throw new InjectError('ctrlers.public', 'authRoute.inject()');
-    // }
-
     // Clone the options into my own _dependencies
     _dependencies = _.assign(_dependencies, options);
 };
@@ -84,7 +76,7 @@ router.inject = function inject(options) {
 
 router.init = function init() {
 
-    router.use(_dependencies.ctrlers.auth.retrieveClientInfo);
+    //router.use(_dependencies.ctrlers.auth.retrieveClientInfo);
 
     // Post token.
     // route : POST ..../auth/token

@@ -47,7 +47,6 @@ const envFile = path.join(__dirname,'..','.env');
 const dbUrlParser = function dbUrlParser(cb) {
     // const DB_URL = URL.parse(process.env.DATABASE_URL);
     const DB_URL = URL.parse(nconf.get('DATABASE_URL'));
-    // const DB_AUTH = DB_URL.auth.split(':');
     const DB_AUTH = DB_URL.auth.split(':');
 
     nconf.overrides({
@@ -75,7 +74,7 @@ const dbUrlParser = function dbUrlParser(cb) {
 
 // Methods
 module.exports = {
-    load: function(logger) {
+    load: function load(logger) {
         if (!logger) {
             throw new InjectError('logger', 'Config.load()');
         }
@@ -94,7 +93,5 @@ module.exports = {
             }
         });
     }
-
-
 
 };
