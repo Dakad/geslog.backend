@@ -106,8 +106,91 @@ apiCtrler.login = function login(req, res, next) {
 }
 
 
+apiCtrler.addStudents = function(req, res, next) {
+
+}
+
+
+apiCtrler.addProfiles = function(req, res, next) {
+    var idProfil = req.body.idProfil;
+    var idUsers = req.body.idUsers;
+
+    if (!idProfil) {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : Profil'));
+    }
+    if (!idUsers || idUsers.length == 0) {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : User(s)'));
+    }
+
+    var profil = _dependencies.dal.Profiles.find({
+        where: {
+            id: idProfil
+        }
+    }).then(function(profil) {
+        console.log(profil.getApplications());
+    });
+
+
+    // On commence par récupérer la liste des logiciels pour le profil reçu
+    /*var AppList = _dependencies.dal.ListApps.findAll({
+        where: {
+            ProfileId: idProfile
+        }
+    });
+    console.log(AppList);
+
+    // Pour tout les logiciels de chaque utilisateur, on rajoute un accès. 
+    /*  _dependencies.dal.Accesses.create({
+
+     }); */
+
+
+}
+
+apiCtrler.addUser = function(req, res, next) {
+    var newUser = req.body;
+    if (!newUser.firstName) {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : firstName'));
+    }
+    if (!newUser.name) {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : Lastname'));
+    }
+    if (!newUser.type) {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : type'));
+    }
+    if (newUser.type == 'PROF' && !newUser.email) {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : email'));
+    }
+
+    if (newUser.type === 'GUEST') {
+        var user = _dependencies.dal.Users.create({
+            firstName: newUser.firstName,
+            name: newUser.name,
+            type: newUser.type
+        }).then(function(user) {
+            return sendJsonResponse(res, 200, JSON.stringify(user));
+        }).catch(function(err) {
+            console.log(err);
+        });
+
+    } else {
+        var user = _dependencies.dal.Users.create({
+            firstName: newUser.firstName,
+            name: newUser.name,
+            type: newUser.type,
+            email: newUser.email
+        }).then(function(user) {
+            return sendJsonResponse(res, 200, JSON.stringify(user));
+        }).catch(function(err) {
+
+        });
+
+    }
+
+
+}
+
 apiCtrler.listLogins = function listLogins(req, res, next) {
-    console.log("LOOOOOOOGISN");
     // REcup matricule from body
     let matricule = req.body.matricule;
     if (!matricule) {

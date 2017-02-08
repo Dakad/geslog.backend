@@ -78,7 +78,11 @@ router.init = function init() {
 
     router.post('/logins', _dependencies.ctrlers.api.listLogins);
 
+    router.post('/user', _dependencies.ctrlers.api.addUser);
 
+    router.post('/users', _dependencies.ctrlers.api.addStudents);
+
+    router.post('/access', _dependencies.ctrlers.api.addProfiles);
 
     router.use(function(err, req, res, next) {
         console.error(err.stack);
