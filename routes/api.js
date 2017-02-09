@@ -27,6 +27,7 @@ const _ = require('lodash');
 const nconf = require('nconf');
 const router = require('express').Router();
 const jwt = require('express-jwt');
+const fileUpload = require('express-fileupload');
 
 
 // Custom - Mine
@@ -68,6 +69,8 @@ router.init = function init() {
 
     router.use(_dependencies.ctrlers.api.checkIfToken);
 
+    router.use(fileUpload());
+
     router.all(['', '/zen'], _dependencies.ctrlers.api.zen);
 
     // Question pour David.
@@ -85,15 +88,14 @@ router.init = function init() {
     router.get('/profil', _dependencies.ctrlers.api.getProfil)
         .post('/profil', _dependencies.ctrlers.api.setProfil)
         .delete('/profil', _dependencies.ctrlers.api.deleteProfil);
-    router.get('/profil', _dependencies.ctrlers.api.getProfil)
-        .post('/profil', _dependencies.ctrlers.api.setProfil)
-        .delete('/profil', _dependencies.ctrlers.api.deleteProfil);
 
     router.get('/app(/:id)?', _dependencies.ctrlers.api.getApp)
         .post('/app', _dependencies.ctrlers.api.setApp)
         .delete('/app', _dependencies.ctrlers.api.deleteApp);
 
     router.get('/users', _dependencies.ctrlers.api.listUsers);
+
+    router.get('/script/:appId', _dependencies.ctrlers.api.getScript);
 
     // Use as error msg on last resort
     router.use(function(err, req, res, next) {
