@@ -78,6 +78,7 @@ const sendJsonResponse = function(res, resStatut, resData) {
 
 
 const sendJsonError = function(res, err) {
+    
     const resObj = {
         "data": {},
         "err": {
@@ -120,14 +121,41 @@ apiCtrler.checkIfToken = function checkIfToken(req, res, next) {
 apiCtrler.connect = function connect(req, res, next) {
     // Check if user exists
     // If exists, generate Token
-    let password = req.body.password;
-    if (!password) {
-        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : password'));
+    let type = req.body.type;
+    if (!type) {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : type'));
     }
 
-    _dependencies.dal.Users.findOne({
-        where: { 'password': password }
-    }).then(function(user) {
+    
+
+    let conditions;
+    if (type === 'STUD') {
+       
+        let matricule = req.body.matricule;
+        if (!matricule) {
+            return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : matricule'));
+        }
+        conditions = {
+            where: {
+                'matricule': matricule
+            }
+        }
+         
+    }
+    else {
+        if (type === 'PROF') {
+            let password = req.body.password;
+            if (!password) {
+                return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : password'));
+            }
+            conditions = {
+                where: {
+                    'password': password
+                }
+            }
+        }
+    }
+    _dependencies.dal.Users.findOne(conditions).then(function(user) {
         if (!user) {
             throw new ApiError.NotFound("this password is invalid");
         }
@@ -137,7 +165,11 @@ apiCtrler.connect = function connect(req, res, next) {
             type: user.type,
         }), user];
     }).spread(function(token, user) {
-        return sendJsonResponse(res, 200, { "token": token, "type": user.type, "matricule": user.matricule });
+        return sendJsonResponse(res, 200, {
+            "token": token,
+            "type": user.type,
+            "matricule": user.matricule
+        });
     }).catch((err) => sendJsonError(res, err));
 };
 
@@ -169,7 +201,10 @@ apiCtrler.addProfiles = function(req, res, next) {
         where: {
             id: profilId
         },
-        include: [{ model: _dependencies.dal.Applications, as: 'apps' }]
+        include: [{
+            model: _dependencies.dal.Applications,
+            as: 'apps'
+        }]
     }).then(function(profil) {
         profil.apps.forEach(function(app) {
             userIds.forEach(function(userId) {
@@ -219,7 +254,8 @@ apiCtrler.addUser = function(req, res, next) {
             name: newUser.name,
             type: newUser.type
         });
-    } else {
+    }
+    else {
         user = _dependencies.dal.Users.create({
             firstName: newUser.firstName,
             name: newUser.name,
@@ -247,7 +283,9 @@ apiCtrler.listLogins = function listLogins(req, res, next) {
 
     // Go find this user with this matricule
     _dependencies.dal.Users.find({
-        where: { 'matricule': matricule }
+        where: {
+            'matricule': matricule
+        }
     }, {
         include: [{
             model: _dependencies.dal.Applications,
@@ -269,14 +307,17 @@ apiCtrler.getProfil = function getProfil(req, res, next) {
     //console.log(name);
     if (name) {
         _dependencies.dal.Profiles.find({
-            where: { 'name': name }
+            where: {
+                'name': name
+            }
         }).then(function(profil) {
             if (!profil) {
                 throw new ApiError.NotFound('this profil name is invalid');
             }
             return sendJsonResponse(res, 200, JSON.stringify(profil));
         }).catch((err) => sendJsonError(res, err));
-    } else {
+    }
+    else {
         _dependencies.dal.Profiles.findAll().then(function(profils) {
             return sendJsonResponse(res, 200, JSON.stringify(profils));
         }).catch((err) => sendJsonError(res, err));
@@ -308,7 +349,9 @@ apiCtrler.deleteProfil = function deleteProfil(req, res, next) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : name'));
     }
     _dependencies.dal.Profiles.destroy({
-        where: { 'id': id }
+        where: {
+            'id': id
+        }
     }).then(function(destroyed) {
         if (!destroyed) {
             throw new ApiError.NotFound('This profil name is invalid');
@@ -328,7 +371,8 @@ apiCtrler.getApp = function getApp(req, res, next) {
             }
             return sendJsonResponse(res, 200, JSON.stringify(app));
         }).catch((err) => sendJsonError(res, err));
-    } else {
+    }
+    else {
         _dependencies.dal.Applications.findAll().then(function(apps) {
             return sendJsonResponse(res, 200, apps);
         })
@@ -364,7 +408,9 @@ apiCtrler.deleteApp = function deleteApp(req, res, next) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : name'));
     }
     _dependencies.dal.Applications.destroy({
-        where: { 'id': id }
+        where: {
+            'id': id
+        }
     }).then(function(destroyed) {
         if (!destroyed) {
             throw new ApiError.NotFound('This Application name is invalid');
