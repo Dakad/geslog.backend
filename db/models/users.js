@@ -78,7 +78,7 @@ const UserModel = function(sequelize, DataTypes) {
         },
         hooks: {
             beforeCreate: function(user) {
-                user.login = user.firstName.charAt(0).toLocaleLowerCase() + user.name.substring(0, 6).toLocaleLowerCase();
+                user.login = user.firstName.charAt(0).toLocaleLowerCase() + user.lastName.substring(0, 6).toLocaleLowerCase();
             }
         }
     });

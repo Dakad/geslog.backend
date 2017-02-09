@@ -154,7 +154,29 @@ apiCtrler.addStudents = function(req, res, next) {
         res.send('No files were uploaded.');
         return;
     }
-    console.log(req.files.file.data.slice(0, 65536).toString());
+
+
+    var file = req.files.file.data.toString('utf-8').split('\n');
+    var users = [];
+    file.forEach(function(line, index) {
+        if (index === 0) {
+            return;
+        }
+
+        var user = line.replace(/["\r]/g, '').split(',');
+        _dependencies.dal.Users.create({
+            matricule: user[0],
+            firstName: user[1],
+            lastName: user[2],
+            year: user[3],
+            orientation: user[4],
+            email: user[5],
+            type: 'STUD'
+        });
+    });
+
+
+    //console.log(test);
     /*fs.readFile(req.files.file.data, 'utf-8', (err, data) => {
         if (err) throw err;
         //console.log(data);
