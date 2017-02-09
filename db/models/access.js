@@ -7,7 +7,7 @@ const Util = require('../../modules/util');
 
 
 const AccessModel = function(sequelize, DataTypes) {
-    const Access = sequelize.define('Accesses', {
+    const Accesses = sequelize.define('Accesses', {
         password: {
             type: DataTypes.STRING
         }
@@ -51,7 +51,7 @@ const AccessModel = function(sequelize, DataTypes) {
         // after (bulk-) creation/updating/deletion and validation.
         hooks: {
             beforeCreate: function(access) {
-                access.set('password', Util.generateShortUUID());
+                accesses.set('password', Util.generateShortUUID());
             }
         }
 
@@ -59,7 +59,7 @@ const AccessModel = function(sequelize, DataTypes) {
 
     });
 
-    return Access;
+    return Accesses;
 };
 
 

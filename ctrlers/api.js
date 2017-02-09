@@ -97,22 +97,24 @@ apiCtrler.zen = function zen(req, res, next) {
 }
 
 apiCtrler.checkIfToken = function checkIfToken(req, res, next) {
-    const nonAuthRoutes = ['/', '/zen', '/connect'];
-    if (nonAuthRoutes.indexOf(req.path.toLowerCase()) >= 0) {
-        next();
-        return;
-    }
-    const token = req.headers['X-GesLog-Auth'];
-    if (!token) {
-        return sendJsonError(res, new ApiError.Unauthorized('Missing the authorization token (X-GesLog-Auth) in the headers'));
-    }
+    // const nonAuthRoutes = ['/', '/zen', '/connect'];
+    // if (nonAuthRoutes.indexOf(req.path.toLowerCase()) >= 0) {
+    //     next();
+    //     return;
+    // }
+    // const token = req.headers['X-GesLog-Auth'];
+    // if (!token) {
+    //     return sendJsonError(res, new ApiError.Unauthorized('Missing the authorization token (X-GesLog-Auth) in the headers'));
+    // }
 
-    Util.validToken(token).then((user) => {
-        req.client = req.user = user;
-        return next(req, res);
-    }).catch((err) => {
-        return sendJsonError(res, new ApiError.Forbidden('The token is compromised ! re-Connect to get another'));
-    });
+    // Util.validToken(token).then((user) => {
+    //     req.client = req.user = user;
+    //     return next(req, res);
+    // }).catch((err) => {
+    //     return sendJsonError(res, new ApiError.Forbidden('The token is compromised ! re-Connect to get another'));
+    // });
+
+    next();
 }
 
 
@@ -132,7 +134,7 @@ apiCtrler.connect = function connect(req, res, next) {
         }
     }).then(function(user) {
         if (!user) {
-            throw new ApiError.NotFound("this password is invalid");
+            throw new ApiError.NotFound("This password is invalid");
         }
         return [Util.generateToken({
             id: user.id,
@@ -144,7 +146,11 @@ apiCtrler.connect = function connect(req, res, next) {
     }).catch((err) => sendJsonError(res, err));
 };
 
-apiCtrler.addStudents = function(req, res, next) {}
+apiCtrler.addStudents = function(req, res, next) {
+
+
+
+}
 
 
 apiCtrler.addProfiles = function(req, res, next) {
@@ -176,7 +182,7 @@ apiCtrler.addProfiles = function(req, res, next) {
                 });
             });
         });
-        return sendJsonResponse(res, 200, true);
+        return sendJsonResponse(res, 201, true);
     }).catch(function(err) {
         console.log(err);
         return sendJsonError(res, err)
@@ -219,7 +225,7 @@ apiCtrler.addUser = function(req, res, next) {
     }
 
     user.then(function(user) {
-        return sendJsonResponse(res, 200, JSON.stringify(user));
+        return sendJsonResponse(res, 201, JSON.stringify(user));
     }).catch(function(err) {
         console.log(err);
         sendJsonError(res, err);
@@ -301,7 +307,7 @@ apiCtrler.deleteProfil = function deleteProfil(req, res, next) {
         if (!destroyed) {
             throw new ApiError.NotFound('This profil name is invalid');
         }
-        return sendJsonResponse(res, 200, "Profil deleted");
+        return sendJsonResponse(res, 204, "Profil deleted");
     }).catch((err) => sendJsonError(res, err));
 
 
@@ -337,7 +343,7 @@ apiCtrler.setApp = function setApp(req, res, next) {
         'format': format
     }).then(function(created) {
         if (!created) {
-            return sendJsonResponse(res, 200, 'Application updated');
+            return sendJsonResponse(res, 201, 'Application updated');
         }
         return sendJsonResponse(res, 201, "Application created");
     }).catch(function(err) {
@@ -357,7 +363,7 @@ apiCtrler.deleteApp = function deleteApp(req, res, next) {
         if (!destroyed) {
             throw new ApiError.NotFound('This Application id is invalid');
         }
-        return sendJsonResponse(res, 200, "Application deleted");
+        return sendJsonResponse(res, 204, "Application deleted");
     }).catch((err) => sendJsonError(res, err));
 };
 
@@ -367,12 +373,12 @@ apiCtrler.listUsers = function listUsers(req, res, next) {
     _dependencies.dal.Users.findAll({
         include: [{
             model: _dependencies.dal.Profiles,
-            as: 'profile'
+            as: 'profil'
         }]
     }).then(function(users) {
+        console.log(users);
         return sendJsonResponse(res, 200, users);
     }).catch((err) => sendJsonError(res, err));
-
 };
 
 

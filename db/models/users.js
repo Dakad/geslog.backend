@@ -64,8 +64,8 @@ const UserModel = function(sequelize, DataTypes) {
                     foreignKey: {
                         allowNull: true,
                         name: 'profileId'
-
-                    }
+                    },
+                    as: 'profil'
                 });
 
                 Users.belongsToMany(models.Applications, {
