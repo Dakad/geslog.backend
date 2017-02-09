@@ -35,6 +35,7 @@ const ApiError = require('../modules/api-error');
 const InjectError = require('../modules/di-inject-error');
 const Util = require('../modules/util');
 const apiCtrler = {};
+const fs = require('fs');
 
 
 
@@ -146,7 +147,81 @@ apiCtrler.connect = function connect(req, res, next) {
     }).catch((err) => sendJsonError(res, err));
 };
 
+
+
 apiCtrler.addStudents = function(req, res, next) {
+    if (!req.files) {
+        res.send('No files were uploaded.');
+        return;
+    }
+    console.log(req.files.file.data.slice(0, 65536).toString());
+    /*fs.readFile(req.files.file.data, 'utf-8', (err, data) => {
+        if (err) throw err;
+        //console.log(data);
+    });*/
+
+}
+
+
+apiCtrler.getScript = function(req, res, next) {
+    var id = Number.parseInt(req.params.appId);
+    // Ajouter du code pour les vérifications
+    if (!id) {
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : id'));
+    }
+
+    _dependencies.dal.Applications.findOne({
+        where: { id: id },
+    }).then(function(app) {
+        if (!app) {
+            throw new ApiError.NotFound("This application is not defined");
+        }
+        var fields = app.format.split('#');
+        var format = fields[0];
+        var delimiter = fields[1];
+        fields = fields.slice(2);
+        return [format, delimiter, _dependencies.dal.Applications.findOne({
+            where: { id: app.id },
+            include: [{ attributes: fields, model: _dependencies.dal.Users, as: 'users' }]
+        })];
+    }).spread(function(format, delimiter, app) {
+        var data = {
+            format: format,
+            script: []
+        };
+        app.users.forEach(function(user) {
+            var ligne = '';
+            if (format === 'bat') {
+                ligne = 'dsadd ';
+            }
+            // console.log(user);
+            Object.keys(user.dataValues).forEach(function(field, index, array) {
+                if (index === array.length - 1) {
+                    ligne += user.Accesses.password;
+                } else {
+                    switch (format) {
+                        case 'bat':
+                            ligne += field + '=' + user.get(field);
+                            break;
+                        case 'csv':
+                        default:
+                            ligne += user.get(field);
+                            break;
+                    }
+
+                }
+
+                if (index !== array.length - 1) {
+                    ligne += delimiter;
+                }
+            });
+            data.script.push(ligne);
+        });
+
+        return sendJsonResponse(res, 201, data);
+    }); //.catch((err) => sendJsonError(res, err));
+
+
 
 
 
@@ -371,6 +446,7 @@ apiCtrler.deleteApp = function deleteApp(req, res, next) {
 // Route à tester !!!
 apiCtrler.listUsers = function listUsers(req, res, next) {
     _dependencies.dal.Users.findAll({
+        where: { $not: { type: 'ADMIN' } },
         include: [{
             model: _dependencies.dal.Profiles,
             as: 'profil'
