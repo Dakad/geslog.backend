@@ -12,7 +12,7 @@ const UserModel = function(sequelize, DataTypes) {
             allowNull: false
 
         },
-        name: {
+        lastName: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -45,7 +45,6 @@ const UserModel = function(sequelize, DataTypes) {
             validate: {
                 len: [7, 7]
             },
-            //defa
         },
         password: {
             type: DataTypes.STRING
@@ -65,8 +64,8 @@ const UserModel = function(sequelize, DataTypes) {
                     foreignKey: {
                         allowNull: true,
                         name: 'profileId'
-
-                    }
+                    },
+                    as: 'profil'
                 });
 
                 Users.belongsToMany(models.Applications, {
