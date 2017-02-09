@@ -79,7 +79,7 @@ const sendJsonResponse = function(res, resStatut, resData) {
 
 
 const sendJsonError = function(res, err) {
-    
+
     const resObj = {
         "data": {},
         "err": {
@@ -130,11 +130,11 @@ apiCtrler.connect = function connect(req, res, next) {
     }
     console.log(type, type.length);
 
-    
+
 
     let conditions;
     if (type === 'STUD') {
-       
+
         let matricule = Number.parseInt(req.body.matricule);
         if (!matricule) {
             return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : matricule'));
@@ -144,9 +144,8 @@ apiCtrler.connect = function connect(req, res, next) {
                 'matricule': matricule
             }
         }
-         
-    }
-    else {
+
+    } else {
         if (type === 'PROF') {
             let password = req.body.password;
             if (!password) {
@@ -186,7 +185,7 @@ apiCtrler.addStudents = function(req, res, next) {
     }
 
 
-    var file = req.files.file.data.toString('utf-8').split('\n');
+    var file = req.files.file.data.toString('utf8').split('\n');
     var users = [];
     file.forEach(function(line, index) {
         if (index === 0) {
@@ -347,8 +346,7 @@ apiCtrler.addUser = function(req, res, next) {
             lastName: newUser.lastName,
             type: newUser.type
         });
-    }
-    else {
+    } else {
         user = _dependencies.dal.Users.create({
             firstName: newUser.firstName,
             lastName: newUser.lastName,
@@ -405,8 +403,7 @@ apiCtrler.getProfil = function getProfil(req, res, next) {
             }
             return sendJsonResponse(res, 200, JSON.stringify(profil));
         }).catch((err) => sendJsonError(res, err));
-    }
-    else {
+    } else {
         _dependencies.dal.Profiles.findAll().then(function(profils) {
             return sendJsonResponse(res, 200, JSON.stringify(profils));
         }).catch((err) => sendJsonError(res, err));
@@ -460,8 +457,7 @@ apiCtrler.getApp = function getApp(req, res, next) {
             }
             return sendJsonResponse(res, 200, JSON.stringify(app));
         }).catch((err) => sendJsonError(res, err));
-    }
-    else {
+    } else {
         _dependencies.dal.Applications.findAll().then(function(apps) {
             return sendJsonResponse(res, 200, apps);
         })
