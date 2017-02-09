@@ -128,7 +128,6 @@ apiCtrler.connect = function connect(req, res, next) {
     if (!type) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : type'));
     }
-    console.log(type, type.length);
 
     
 
