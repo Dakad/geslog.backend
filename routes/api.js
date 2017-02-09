@@ -70,6 +70,8 @@ router.init = function init() {
 
     router.all(['', '/zen'], _dependencies.ctrlers.api.zen);
 
+    // Question pour David.
+    // Pour connecter l'admin, ce n'est pas plutôt un GET ? 
     router.post('/connect', _dependencies.ctrlers.api.connect);
 
     router.get('/logins/:matricule', _dependencies.ctrlers.api.listLogins);
