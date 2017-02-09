@@ -66,10 +66,9 @@ router.inject = function inject(options) {
 
 router.init = function init() {
 
-    /* Default response to /api on every method {GET,POST, PUT, DELETE} */
+    router.use(_dependencies.ctrlers.api.checkIfToken);
 
-
-    router.all('/zen', _dependencies.ctrlers.api.zen);
+    router.all(['', '/zen'], _dependencies.ctrlers.api.zen);
 
     router.post('/connect', _dependencies.ctrlers.api.connect);
 
@@ -88,12 +87,13 @@ router.init = function init() {
         .post('/profil', _dependencies.ctrlers.api.setProfil)
         .delete('/profil', _dependencies.ctrlers.api.deleteProfil);
 
-    router.get('/app', _dependencies.ctrlers.api.getApp)
+    router.get('/app(/:id)?', _dependencies.ctrlers.api.getApp)
         .post('/app', _dependencies.ctrlers.api.setApp)
         .delete('/app', _dependencies.ctrlers.api.deleteApp);
 
     router.get('/users', _dependencies.ctrlers.api.listUsers);
 
+    // Use as error msg on last resort
     router.use(function(err, req, res, next) {
         console.error(err.stack);
         res.status(500).send('Something went to shit ! Go check your console _');

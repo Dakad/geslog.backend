@@ -33,13 +33,9 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const nconf = require('nconf');
 const express = require('express');
-const favicon = require('serve-favicon');
 const Morgan = require('morgan');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
-const expressValidator = require('express-validator');
-const cookieParser = require('cookie-parser');
-
 
 // Custom - Mine
 const InjectError = require('./di-inject-error');
@@ -107,19 +103,6 @@ Server.configServer = function configServer(options) {
         _dependencies.logger.info('[Server] Init the app(Express) with static folder :', folder);
         _app.use(express.static(folder));
 
-        folder = path.join(folder, 'img', 'favicon.ico');
-        _dependencies.logger.info('[Server] Init the app(Express) with the favicon :', folder);
-        _app.use(favicon(folder));
-
-        // View engine setup
-        folder = path.join(__dirname, '..', 'views');
-        _dependencies.logger.info('[Server] Init the app(Express) with views folder :', folder);
-        _app.set('views', folder);
-
-
-        _dependencies.logger.info('[Server] Init the app(Express) with Views Engine :', ' Pug(Jade)');
-        _app.set('view engine', 'pug');
-
         // Get port from env and store in Express.
         // logger.info('[Server] Init the app(Express) with env Port :',nconf.get('PORT'));
         // _app.set('port', nconf.get('PORT'));
@@ -135,17 +118,10 @@ Server.configServer = function configServer(options) {
         })); // The JSON parsed body will only
         // contain key-value pairs, where the value can be a string or array
 
-        _dependencies.logger.info('[Server] Init the app(Express) with CookieParser ');
-        _app.use(cookieParser(nconf.get('APP_COOKIE_SECRET')));
-
-
-        _dependencies.logger.info('[Server] Init the app(Express) with validator middleware :', 'expressValidator');
-        _app.use(expressValidator());
-
 
         _dependencies.logger.info('[Server] Init the app(Express) protection from some well-known web vulnerabilities :', 'helmet');
-        //_app.use(helmet());
-        // _app.use(helmet.noCache());
+        _app.use(helmet());
+        _app.use(helmet.noCache());
 
 
         _dependencies.logger.info('[Server] Init done !');
@@ -195,7 +171,6 @@ Server.configRoutes = function configRoutes(options) {
         if (!_.has(_dependencies, 'ctrlers.api')) {
             throw new InjectError('apiCtrler', 'Server.configRoutes()');
         }
-
 
         logger.info('[Server - Routes] Init the app(Express) with route for : ', routes.api.url);
         _app.use(routes.api.url, routes.api.src);

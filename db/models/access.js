@@ -6,7 +6,7 @@ const nconf = require("nconf");
 const Util = require('../../modules/util');
 
 
-const AcessModel = function(sequelize, DataTypes) {
+const AccessModel = function(sequelize, DataTypes) {
     const Access = sequelize.define('Accesses', {
         password: {
             type: DataTypes.STRING
@@ -64,4 +64,4 @@ const AcessModel = function(sequelize, DataTypes) {
 
 
 
-module.exports = AcessModel;
+module.exports = AccessModel;

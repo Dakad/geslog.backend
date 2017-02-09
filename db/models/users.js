@@ -16,13 +16,10 @@ const UserModel = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: false
         },
-        year: {
-            type: DataTypes.STRING(2),
+        year: DataTypes.STRING(2),
 
-        },
-        orientation: {
-            type: DataTypes.STRING(3),
-        },
+        orientation: DataTypes.STRING(3),
+
         email: {
             type: DataTypes.STRING,
             unique: true,

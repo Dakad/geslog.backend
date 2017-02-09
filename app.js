@@ -35,13 +35,9 @@ const Logger = require('./modules/logger.js');
 const DAL = require("./db/dal");
 
 // DAOs
-const UsersDAO = require('./db/dao/users');
-const AppsDAO = require('./db/dao/apps');
 
 // Routes
 const apiRoute = require('./routes/api');
-const authRoute = require('./routes/auth');
-// const defRoute = require('./routes/public');
 
 // Ctrlers
 const apiCtrler = require('./ctrlers/api');
@@ -57,10 +53,7 @@ const _dependencies = {
         'api': apiCtrler,
     },
     dal: DAL,
-    daos: {
-        'users': UsersDAO,
-        'apps': AppsDAO
-    },
+    daos: {},
 };
 
 
@@ -89,10 +82,6 @@ Logger.info('[App] apiCtrler injected');
 
 apiRoute.inject(_dependencies);
 Logger.info('[App] apiRoute injected');
-
-authRoute.inject(_dependencies);
-Logger.info('[App] authRoute injected');
-
 
 
 Logger.info('[App] D.I completed');

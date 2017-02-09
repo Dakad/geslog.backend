@@ -31,14 +31,9 @@
 const _ = require('lodash');
 
 // Custom -Mine
-const Util = require('../modules/util');
 const ApiError = require('../modules/api-error');
-const DB = require('../db/dal');
-const UserDAO = require('../db/dao/users');
-const AppsDAO = require('../db/dao/apps');
-
-// Custom - Mine
 const InjectError = require('../modules/di-inject-error');
+const Util = require('../modules/util');
 const apiCtrler = {};
 
 
@@ -85,7 +80,10 @@ const sendJsonResponse = function(res, resStatut, resData) {
 const sendJsonError = function(res, err) {
     const resObj = {
         "data": {},
-        "err": err,
+        "err": {
+            'status': err.status,
+            'message': err.message
+        },
         "status": err.status
     };
     res.status(resObj.status).json(resObj);
@@ -98,24 +96,49 @@ apiCtrler.zen = function zen(req, res, next) {
     return sendJsonResponse(res, 200, 'Hello, I\' will soon give u some deep shit quotes ! Just wait for it !');
 }
 
+apiCtrler.checkIfToken = function checkIfToken(req, res, next) {
+    const nonAuthRoutes = ['/', '/zen', '/connect'];
+    if (nonAuthRoutes.indexOf(req.path.toLowerCase()) >= 0) {
+        next();
+        return;
+    }
+    const token = req.headers['X-GesLog-Auth'];
+    if (!token) {
+        return sendJsonError(res, new ApiError.Unauthorized('Missing the authorization token (X-GesLog-Auth) in the headers'));
+    }
+
+    Util.validToken(token).then((user) => {
+        req.client = req.user = user;
+        return next(req, res);
+    }).catch((err) => {
+        return sendJsonError(res, new ApiError.Forbidden('The token is compromised ! re-Connect to get another'));
+    });
+}
+
+
+
 apiCtrler.connect = function connect(req, res, next) {
     // Check if user exists
     // If exists, generate Token
     let password = req.body.password;
     if (!password) {
-        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : passwd'));
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : password'));
     }
 
     _dependencies.dal.Users.findOne({
         where: { 'password': password }
     }).then(function(user) {
         if (!user) {
-            return sendJsonError(res, new ApiError.NotFound("this passwd is invalid"));
+            throw new ApiError.NotFound("this password is invalid");
         }
-        return [Util.generateToken(user.type), user];
+        return [Util.generateToken({
+            id: user.id,
+            login: user.login,
+            type: user.type,
+        }), user];
     }).spread(function(token, user) {
         return sendJsonResponse(res, 200, { "token": token, "type": user.type, "matricule": user.matricule });
-    })
+    }).catch((err) => sendJsonError(res, err));
 };
 
 
@@ -158,9 +181,13 @@ apiCtrler.addProfiles = function(req, res, next) {
         });
         // Demander à David ce qu'on doit renvoyer réponse.
         // Oubien faire un redirect faire getUsers? 
+
+        // Pas besoin, ca fait du traitement pour rien il va les demander lui-même 
+        // Si besoin , le true est parfait
         return sendJsonResponse(res, 200, true);
     }).catch(function(err) {
         console.log(err);
+        return sendJsonError(res, err)
     });
 
     // Pour tout les logiciels de chaque utilisateur, on rajoute un accès. 
@@ -175,46 +202,45 @@ apiCtrler.addUser = function(req, res, next) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : firstName'));
     }
     if (!newUser.name) {
-        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : Lastname'));
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : name'));
     }
     if (!newUser.type) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : type'));
     }
     if (newUser.type == 'PROF' && !newUser.email) {
-        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : email'));
+        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : email por type prof'));
     }
 
+    var user;
+
     if (newUser.type === 'GUEST') {
-        var user = _dependencies.dal.Users.create({
+        user = _dependencies.dal.Users.create({
             firstName: newUser.firstName,
             name: newUser.name,
             type: newUser.type
-        }).then(function(user) {
-            return sendJsonResponse(res, 200, JSON.stringify(user));
-        }).catch(function(err) {
-            console.log(err);
         });
-
     } else {
-        var user = _dependencies.dal.Users.create({
+        user = _dependencies.dal.Users.create({
             firstName: newUser.firstName,
             name: newUser.name,
             type: newUser.type,
             email: newUser.email
-        }).then(function(user) {
-            return sendJsonResponse(res, 200, JSON.stringify(user));
-        }).catch(function(err) {
-
         });
-
     }
+
+    user.then(function(user) {
+        return sendJsonResponse(res, 200, JSON.stringify(user));
+    }).catch(function(err) {
+        console.log(err);
+        sendJsonError(res, err);
+    });
 
 
 }
 
 apiCtrler.listLogins = function listLogins(req, res, next) {
-    // REcup matricule from body
-    let matricule = req.params.matricule;
+    // REcup matricule from params
+    let matricule = Number.parseInt(req.params.matricule);
     if (!matricule) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : matricule'));
     }
@@ -246,35 +272,33 @@ apiCtrler.getProfil = function getProfil(req, res, next) {
             where: { 'name': name }
         }).then(function(profil) {
             if (!profil) {
-                return sendJsonError(res, new ApiError.NotFound('this profil name is invalid'));
+                throw new ApiError.NotFound('this profil name is invalid');
             }
             return sendJsonResponse(res, 200, JSON.stringify(profil));
-        })
+        }).catch((err) => sendJsonError(res, err));
     } else {
-
         _dependencies.dal.Profiles.findAll().then(function(profils) {
             return sendJsonResponse(res, 200, JSON.stringify(profils));
-        })
+        }).catch((err) => sendJsonError(res, err));
+
     }
 };
 
 apiCtrler.setProfil = function setProfil(req, res, next) {
     let name = req.body.name;
     if (!name) {
-        return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : name'));
+        throw new ApiError.BadRequest('Missing the parameter : name');
     }
     _dependencies.dal.Profiles.upsert({
         'name': name
     }).then(function(created) {
         if (!created) {
-            return sendJsonError(res, new ApiError.BadRequest('Failed to create Profil'));
+            throw new ApiError.BadRequest('Failed to create Profil');
         }
-
         return sendJsonResponse(res, 201, "Profil created");
-
     }).catch(function(err) {
-
         console.log(err);
+        sendJsonError(res, err);
     })
 };
 
@@ -286,20 +310,29 @@ apiCtrler.deleteProfil = function deleteProfil(req, res, next) {
     _dependencies.dal.Profiles.destroy({
         where: { 'id': id }
     }).then(function(destroyed) {
-        if (destroyed === 0) {
-            return sendJsonError(res, new ApiError.NotFound('this profil name is invalid'));
+        if (!destroyed) {
+            throw new ApiError.NotFound('This profil name is invalid');
         }
         return sendJsonResponse(res, 200, "Profil deleted");
-    })
+    }).catch((err) => sendJsonError(res, err));
+
 
 }
 
 apiCtrler.getApp = function getApp(req, res, next) {
-    _dependencies.dal.Applications.findAll().then(function(app) {
-        return sendJsonResponse(res, 200, JSON.stringify(app));
-    })
-
-
+    let id = req.params.id;
+    if (id) {
+        _dependencies.dal.Applications.findById(id).then(function(app) {
+            if (!app) {
+                throw new ApiError.NotFound('This application id is invalid');
+            }
+            return sendJsonResponse(res, 200, JSON.stringify(app));
+        }).catch((err) => sendJsonError(res, err));
+    } else {
+        _dependencies.dal.Applications.findAll().then(function(apps) {
+            return sendJsonResponse(res, 200, apps);
+        })
+    }
 };
 
 apiCtrler.setApp = function setApp(req, res, next) {
@@ -316,12 +349,12 @@ apiCtrler.setApp = function setApp(req, res, next) {
         'format': format
     }).then(function(created) {
         if (!created) {
-            return sendJsonError(res, new ApiError.BadRequest('Failed to create Application'));
+            return sendJsonResponse(res, 200, 'Application updated');
         }
         return sendJsonResponse(res, 201, "Application created");
-
     }).catch(function(err) {
         console.log(err);
+        sendJsonError(res, err);
     })
 };
 
@@ -333,24 +366,27 @@ apiCtrler.deleteApp = function deleteApp(req, res, next) {
     _dependencies.dal.Applications.destroy({
         where: { 'id': id }
     }).then(function(destroyed) {
-        if (destroyed === 0) {
-            return sendJsonError(res, new ApiError.NotFound('this Application name is invalid'));
+        if (!destroyed) {
+            throw new ApiError.NotFound('This Application name is invalid');
         }
         return sendJsonResponse(res, 200, "Application deleted");
-    })
+    }).catch((err) => sendJsonError(res, err));
 };
 
 apiCtrler.listUsers = function listUsers(req, res, next) {
     _dependencies.dal.Users.findAll({
         include: [{
             model: _dependencies.dal.Profiles,
-            as: 'profiles'
+            // as: 'profiles'
         }]
     }).then(function(users) {
-        return sendJsonResponse(res, 200, JSON.stringify(users));
-    })
+        return sendJsonResponse(res, 200, users);
+    }).catch((err) => sendJsonError(res, err));
 
 };
+
+
+
 
 /**
  * Exports

@@ -14,7 +14,6 @@ const crypto = require('crypto');
 const _ = require('lodash');
 const Promise = require('bluebird');
 const nconf = require("nconf");
-const Validator = require('validator');
 const jwt = require('jsonwebtoken');
 const shortId = require("shortid");
 const ms = require("ms");
@@ -35,35 +34,6 @@ const Util = module.exports;
 
 Util.DEF_TOKEN_EXP = Util.DEF_COOKIE_AGE = ms((31 * 3) + 'd'); // Valid for 3 months
 
-
-
-
-Util.validInput = function(input) {
-    return new Promise(function(fulfill, reject) {
-        const errors = {};
-
-        if (Validator.isEmpty(input.email)) {
-            errors.email = 'Must provide an Email';
-        }
-        else {
-            if (!Validator.isEmail(input.email))
-                errors.email = 'Your email is invalid';
-        }
-
-        if (Validator.isEmpty(input.pwd))
-            errors.pwd = 'Must provide your password';
-
-        if (input.pwd2 && Validator.isEmpty(input.pwd2)) {
-            errors.pwd2 = 'Must provide your password confirmation';
-        }
-        else {
-            if (input.pwd2 && !Validator.equals(input.pwd, input.pwd2))
-                errors.pwd = 'Must provide your password confirmation';
-        }
-        return (_.isEmpty(errors) ? fulfill(true) : reject(errors));
-    });
-
-};
 
 
 Util.validToken = function(token, secret) {
@@ -112,7 +82,7 @@ Util.hashPassword = function(pwd, salt, length) {
 Util.validPassword = function(pwd, salt, hashPassword, length) {
     length = (!length) ? 64 : length;
     return new Promise(function(fulfill) {
-        Util.hashPassword(pwd, salt,length).then(function(hash){
+        Util.hashPassword(pwd, salt, length).then(function(hash) {
             return fulfill(_.isEqual(hashPassword, hash));
         })
     });
@@ -121,4 +91,3 @@ Util.validPassword = function(pwd, salt, hashPassword, length) {
 Util.generateShortUUID = function() {
     return shortId.generate();
 }
-
