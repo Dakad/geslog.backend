@@ -428,11 +428,15 @@ apiCtrler.setProfil = function setProfil(req, res, next) {
     if (!name) {
         throw new ApiError.BadRequest('Missing the parameter : name');
     }
-    _dependencies.dal.Profiles.upsert({
+    let values = {
         'name': name
-    }).then(function(created) {
+    };
+    if(req.body.id){
+        values.id = req.body.id;
+    }
+    _dependencies.dal.Profiles.upsert(values).then(function(created) {
         if (!created) {
-            throw new ApiError.BadRequest('Failed to create Profil');
+            return sendJsonResponse(res, 200, 'Profil updated');
         }
         return sendJsonResponse(res, 201, "Profil created");
     }).catch(function(err) {
@@ -486,10 +490,14 @@ apiCtrler.setApp = function setApp(req, res, next) {
     if (!format) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : format'));
     }
-    _dependencies.dal.Applications.upsert({
+    let values = {
         'name': name,
         'format': format
-    }).then(function(created) {
+    };
+    if(req.body.id){
+        values.id = req.body.id;
+    }
+    _dependencies.dal.Applications.upsert(values).then(function(created) {
         if (!created) {
             return sendJsonResponse(res, 201, 'Application updated');
         }
