@@ -86,7 +86,7 @@ module.exports = {
                 dbUrlParser();
                 nconf.defaults({ 'APP_PORT': 3030 });
                 // If not env. var TOKENT_SECRET, define a new one.
-                nconf.defaults({ 'TOKEN_SECRET': uuidV4() });
+                nconf.defaults({ 'APP_TOKEN_SECRET': uuidV4() });
                 return fulfill(); // Done, next task on the promise
             } catch (ex) {
                 return reject(new Error('[DB] Error while loading all configs - ' + ex.message))

@@ -99,6 +99,8 @@ apiCtrler.zen = function zen(req, res, next) {
 }
 
 apiCtrler.checkIfToken = function checkIfToken(req, res, next) {
+    // console.log(req.headers);
+    console.log(req.body);
     // const nonAuthRoutes = ['/', '/zen', '/connect'];
     // if (nonAuthRoutes.indexOf(req.path.toLowerCase()) >= 0) {
     //     next();
@@ -128,7 +130,8 @@ apiCtrler.connect = function connect(req, res, next) {
     if (!type) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : type'));
     }
-
+    
+    type = type.toUpperCase();
 
 
     let conditions;
@@ -456,6 +459,7 @@ apiCtrler.deleteProfil = function deleteProfil(req, res, next) {
 
 
 }
+
 
 apiCtrler.getApp = function getApp(req, res, next) {
     let id = req.params.id;
