@@ -51,7 +51,7 @@ const AccessModel = function(sequelize, DataTypes) {
         // after (bulk-) creation/updating/deletion and validation.
         hooks: {
             beforeCreate: function(access) {
-                accesses.set('password', Util.generateShortUUID());
+                access.set('password', Util.generateShortUUID());
             }
         }
 
