@@ -130,7 +130,7 @@ apiCtrler.connect = function connect(req, res, next) {
     if (!type) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : type'));
     }
-    
+
     type = type.toUpperCase();
 
 
@@ -156,7 +156,7 @@ apiCtrler.connect = function connect(req, res, next) {
             conditions = {
                 where: {
                     'password': password,
-                    'type' : 'ADMIN'
+                    'type': 'ADMIN'
                 }
             }
         }
@@ -188,7 +188,7 @@ apiCtrler.importUsers = function(req, res, next) {
     }
 
 
-    var file = req.files.file.data.toString('utf8').split('\n');
+    var file = req.files.file.data.toString('ascii').split('\n');
     var users = [];
     file.forEach(function(line, index) {
         if (index === 0) {
@@ -243,30 +243,35 @@ apiCtrler.getScript = function(req, res, next) {
             format: format,
             script: []
         };
-        if(!app.users){
+        if (!app.users) {
             throw new ApiError.NotFound('No user defined for this application');
         }
         app.users.forEach(function(user) {
             var ligne = '';
             if (format === 'bat') {
-                ligne = 'dsadd ';
+                ligne = 'dsadd user ';
             }
             // console.log(user);
             Object.keys(user.dataValues).forEach(function(field, index, array) {
-                if (index === array.length - 1) {
-                    ligne += user.Accesses.password;
-                } else {
-                    switch (format) {
-                        case 'bat':
-                            ligne += field + '=' + user.get(field);
-                            break;
-                        case 'csv':
-                        default:
-                            ligne += user.get(field);
-                            break;
-                    }
 
+                switch (format) {
+                    case 'bat':
+                        if (index === array.length - 1) {
+                            ligne += 'mdp=' + user.Accesses.password;
+                            return;
+                        }
+                        ligne += field + '=' + user.get(field);
+                        break;
+                    case 'csv':
+                        if (index === array.length - 1) {
+                            ligne += user.Accesses.password;
+                            return;
+                        }
+                    default:
+                        ligne += user.get(field);
+                        break;
                 }
+
 
                 if (index !== array.length - 1) {
                     ligne += delimiter;
@@ -299,9 +304,9 @@ apiCtrler.addProfiles = function(req, res, next) {
     if (userIds.length == 0) {
         return sendJsonError(res, new ApiError.BadRequest('THe parameter user is empty'));
     }
-    
-    
-    
+
+
+
     _dependencies.dal.Profiles.findOne({
         where: {
             id: profilId
@@ -311,7 +316,7 @@ apiCtrler.addProfiles = function(req, res, next) {
             as: 'apps'
         }]
     }).then(function(profil) {
-    console.log(profil.apps);
+        console.log(profil.apps);
         profil.apps.forEach(function(app) {
             userIds.forEach(function(userId) {
                 _dependencies.dal.Accesses.create({
@@ -330,18 +335,18 @@ apiCtrler.addProfiles = function(req, res, next) {
 
 apiCtrler.addUser = function(req, res, next) {
     var newUser = req.body;
-        
+
     if (!newUser) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter'));
     }
-    
+
     if (!newUser.firstName) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : firstName'));
     }
     if (!newUser.lastName) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : lastName'));
     }
-    
+
     if (!newUser.type) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : type'));
     }
@@ -362,8 +367,8 @@ apiCtrler.addUser = function(req, res, next) {
             firstName: newUser.firstName,
             lastName: newUser.lastName,
             type: newUser.type,
-            orientation : newUser.orientation,
-            matricule : newUser.matricule,
+            orientation: newUser.orientation,
+            matricule: newUser.matricule,
             email: newUser.email
         });
     }
@@ -435,7 +440,7 @@ apiCtrler.setProfil = function setProfil(req, res, next) {
     let values = {
         'name': name
     };
-    if(req.body.id){
+    if (req.body.id) {
         values.id = req.body.id;
     }
     _dependencies.dal.Profiles.upsert(values).then(function(created) {
@@ -498,7 +503,7 @@ apiCtrler.setApp = function setApp(req, res, next) {
         'name': name,
         'format': format
     };
-    if(req.body.id){
+    if (req.body.id) {
         values.id = req.body.id;
     }
     _dependencies.dal.Applications.upsert(values).then(function(created) {

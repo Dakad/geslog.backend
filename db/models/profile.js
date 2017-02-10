@@ -8,6 +8,8 @@ const ProfilModel = function(sequelize, DataTypes) {
     const Profiles = sequelize.define('Profiles', {
         name: DataTypes.STRING
     }, {
+        paranoid: true,
+        version: true,
         schema: nconf.get('DATABASE_SCHEMA') || 'public',
         classMethods: {
             associate: function(models) {
