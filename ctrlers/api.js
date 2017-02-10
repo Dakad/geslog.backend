@@ -243,6 +243,9 @@ apiCtrler.getScript = function(req, res, next) {
             format: format,
             script: []
         };
+        if(!app.users){
+            throw new ApiError.NotFound('No user defined for this application');
+        }
         app.users.forEach(function(user) {
             var ligne = '';
             if (format === 'bat') {
@@ -273,7 +276,7 @@ apiCtrler.getScript = function(req, res, next) {
         });
 
         return sendJsonResponse(res, 201, data);
-    }); //.catch((err) => sendJsonError(res, err));
+    }).catch((err) => sendJsonError(res, err));
 
 
 
@@ -298,6 +301,7 @@ apiCtrler.addProfiles = function(req, res, next) {
     }
     
     
+    
     _dependencies.dal.Profiles.findOne({
         where: {
             id: profilId
@@ -307,7 +311,7 @@ apiCtrler.addProfiles = function(req, res, next) {
             as: 'apps'
         }]
     }).then(function(profil) {
-                console.log(Object.keys(profil.dataValues.apps));
+    console.log(profil.apps);
         profil.apps.forEach(function(app) {
             userIds.forEach(function(userId) {
                 _dependencies.dal.Accesses.create({
@@ -509,7 +513,7 @@ apiCtrler.setApp = function setApp(req, res, next) {
 };
 
 apiCtrler.deleteApp = function deleteApp(req, res, next) {
-    let id = req.body.id;
+    let id = req.params.id;
     if (!id) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : id'));
     }
@@ -521,7 +525,7 @@ apiCtrler.deleteApp = function deleteApp(req, res, next) {
         if (!destroyed) {
             throw new ApiError.NotFound('This Application id is invalid');
         }
-        return sendJsonResponse(res, 204, "Application deleted");
+        return sendJsonResponse(res, 200, "Application deleted");
     }).catch((err) => sendJsonError(res, err));
 };
 

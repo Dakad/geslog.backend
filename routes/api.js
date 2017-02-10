@@ -92,12 +92,12 @@ router.init = function init() {
     // All interraction for an Profil
     router.get('/profil(/:id)?', _dependencies.ctrlers.api.getProfil)
           .post('/profil', _dependencies.ctrlers.api.setProfil)
-          .delete('/profil', _dependencies.ctrlers.api.deleteProfil);
+          .delete('/profil/:id', _dependencies.ctrlers.api.deleteProfil);
 
     // All interraction for an Application
     router.get('/app(/:id)?', _dependencies.ctrlers.api.getApp)
           .post('/app', _dependencies.ctrlers.api.setApp)
-          .delete('/app', _dependencies.ctrlers.api.deleteApp);
+          .delete('/app/:id', _dependencies.ctrlers.api.deleteApp);
 
     // Retrieve the specified pplication by his id
     router.get('/script/:appId', _dependencies.ctrlers.api.getScript);
