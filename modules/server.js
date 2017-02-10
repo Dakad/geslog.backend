@@ -36,6 +36,7 @@ const express = require('express');
 const Morgan = require('morgan');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const cors = require('cors')
 
 // Custom - Mine
 const InjectError = require('./di-inject-error');
@@ -117,11 +118,15 @@ Server.configServer = function configServer(options) {
             extended: false
         })); // The JSON parsed body will only
         // contain key-value pairs, where the value can be a string or array
+    
+        _dependencies.logger.info('[Server] Init the app(Express) by enabling CORS :',' DONE');
+        _app.use(cors());
 
 
-        _dependencies.logger.info('[Server] Init the app(Express) protection from some well-known web vulnerabilities :', 'helmet');
-        _app.use(helmet());
-        _app.use(helmet.noCache());
+        // _dependencies.logger.info('[Server] Init the app(Express) protection from some well-known web vulnerabilities :', 'helmet');
+        _app.disable('x-powered-by')
+        // _app.use(helmet());
+        // _app.use(helmet.noCache());
 
 
         _dependencies.logger.info('[Server] Init done !');

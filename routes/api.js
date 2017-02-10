@@ -73,33 +73,40 @@ router.init = function init() {
 
     router.all(['', '/zen'], _dependencies.ctrlers.api.zen);
 
-    // Question pour David.
-    // Pour connecter l'admin, ce n'est pas plutôt un GET ? 
+    // Connect an admin or student and send back a token for futher request
     router.post('/connect', _dependencies.ctrlers.api.connect);
 
+    // Retrieve the alls logins for a specified student by his matricule
     router.get('/logins/:matricule', _dependencies.ctrlers.api.listLogins);
 
+    // Create a new user
     router.post('/user', _dependencies.ctrlers.api.addUser);
 
-    router.post('/users', _dependencies.ctrlers.api.addStudents);
+    // All interactions for an user
+    router.get('/users', _dependencies.ctrlers.api.listUsers)
+          .post('/users', _dependencies.ctrlers.api.importUsers);
 
+    // Assign a profil to a specific user
     router.post('/access', _dependencies.ctrlers.api.addProfiles);
+    
+    // All interraction for an Profil
+    router.get('/profil(/:id)?', _dependencies.ctrlers.api.getProfil)
+          .post('/profil', _dependencies.ctrlers.api.setProfil)
+          .delete('/profil', _dependencies.ctrlers.api.deleteProfil);
 
-    router.get('/profil', _dependencies.ctrlers.api.getProfil)
-        .post('/profil', _dependencies.ctrlers.api.setProfil)
-        .delete('/profil', _dependencies.ctrlers.api.deleteProfil);
-
+    // All interraction for an Application
     router.get('/app(/:id)?', _dependencies.ctrlers.api.getApp)
-        .post('/app', _dependencies.ctrlers.api.setApp)
-        .delete('/app', _dependencies.ctrlers.api.deleteApp);
+          .post('/app', _dependencies.ctrlers.api.setApp)
+          .delete('/app', _dependencies.ctrlers.api.deleteApp);
 
-    router.get('/users', _dependencies.ctrlers.api.listUsers);
-
+    // Retrieve the specified pplication by his id
     router.get('/script/:appId', _dependencies.ctrlers.api.getScript);
+
+
 
     // Use as error msg on last resort
     router.use(function(err, req, res, next) {
-        console.error(err.stack);
+        console.error(err.stack); // Instead log this error
         res.status(500).send('Something went to shit ! Go check your console _');
     });
 };

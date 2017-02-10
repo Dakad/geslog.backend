@@ -122,8 +122,8 @@ DB.initConnection = function connect() {
             if (schemas.indexOf(nconf.get('DATABASE_SCHEMA')) < 0) // No schema with DB_SCHEMA
                 return DB.sequelize.createSchema(nconf.get('DATABASE_SCHEMA'));
         })
-        //.then(() => DB.sequelize.sync()) // Create all tables if they doesn't exist in database
-        .then(function() { DB.sequelize.sync({ force: true }) }) // DROP TABLES before CREATE
+        .then(() => DB.sequelize.sync()) // Create all tables if they doesn't exist in database
+        // .then(function() { DB.sequelize.sync({ force: true }) }) // DROP TABLES before CREATE
         .then(function() {
             const urlDB = nconf.get('DATABASE_USER') + '@' + nconf.get('DATABASE_SERVER') + '~' + nconf.get('DATABASE_NAME');
             _dependencies.logger.info('[DB] Connection has been established successfully to :', urlDB);
