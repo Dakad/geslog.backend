@@ -316,7 +316,6 @@ apiCtrler.addProfiles = function(req, res, next) {
             as: 'apps'
         }]
     }).then(function(profil) {
-        console.log(profil.apps);
         profil.apps.forEach(function(app) {
             userIds.forEach(function(userId) {
                 _dependencies.dal.Accesses.create({
@@ -404,7 +403,6 @@ apiCtrler.listLogins = function listLogins(req, res, next) {
             as: 'access'
         }]
     }).then(function(logins) {
-        console.log(logins.toJSON());
         if (!logins) {
             logins = {};
         }
