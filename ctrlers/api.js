@@ -283,22 +283,21 @@ apiCtrler.getScript = function(req, res, next) {
 
 
 apiCtrler.addProfiles = function(req, res, next) {
-    var profilId = req.body.profil;
-    var userIds = req.body.users;
+    let profilId = req.body.profil;
 
     if (!profilId) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : profil'));
     }
-    if (!userIds) {
+    if (!req.body.users) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : users'));
     }
 
-    userIds = JSON.parse(userIds);
+    let userIds = req.body.users.split(',');
     if (userIds.length == 0) {
         return sendJsonError(res, new ApiError.BadRequest('THe parameter user is empty'));
     }
-
-
+    
+    
     _dependencies.dal.Profiles.findOne({
         where: {
             id: profilId
@@ -308,6 +307,7 @@ apiCtrler.addProfiles = function(req, res, next) {
             as: 'apps'
         }]
     }).then(function(profil) {
+                console.log(Object.keys(profil.dataValues.apps));
         profil.apps.forEach(function(app) {
             userIds.forEach(function(userId) {
                 _dependencies.dal.Accesses.create({
