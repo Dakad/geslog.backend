@@ -49,7 +49,7 @@ const devTeam = require("../static/dev-team");
  * Variables
  *
  */
- const renderCtrler = {};
+const renderCtrler = {};
 
 // Injected
 let _dependencies = {};
@@ -63,15 +63,15 @@ let _dependencies = {};
  * @parameter   {Object}    opts    Contains all dependencies needed by ths modules
  *
  */
-renderCtrler.inject = function inject (opts) {
+renderCtrler.inject = function inject(opts) {
 
-    if(!opts){
+    if (!opts) {
         throw new InjectError('all dependencies', 'renderCtrler.inject()');
     }
 
 
     // Clone the options into my own _dependencies
-    _dependencies = _.assign(_dependencies,opts);
+    _dependencies = _.assign(_dependencies, opts);
 
 };
 
@@ -159,4 +159,3 @@ renderCtrler.errorPage = function renderErrorPage(err, res) {
  */
 
 module.exports = renderCtrler;
-

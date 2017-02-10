@@ -300,9 +300,10 @@ apiCtrler.addProfiles = function(req, res, next) {
         return sendJsonError(res, new ApiError.BadRequest('Missing the parameter : users'));
     }
 
-    let userIds = req.body.users.split(',');
+    console.log(req.body.users);
+    let userIds = req.body.users; //.split(',');
     if (userIds.length == 0) {
-        return sendJsonError(res, new ApiError.BadRequest('THe parameter user is empty'));
+        return sendJsonError(res, new ApiError.BadRequest('The parameter user is empty'));
     }
 
 
@@ -316,7 +317,7 @@ apiCtrler.addProfiles = function(req, res, next) {
             as: 'apps'
         }]
     }).then(function(profil) {
-        console.log(profil.apps);
+        //console.log(profil.apps);
         profil.apps.forEach(function(app) {
             userIds.forEach(function(userId) {
                 _dependencies.dal.Accesses.create({
@@ -325,14 +326,24 @@ apiCtrler.addProfiles = function(req, res, next) {
                 });
             });
         });
+
+        userIds.forEach(function(userId) {
+            _dependencies.dal.Users.update({ profileId: profilId }, {
+                where: { id: userId }
+            });
+        });
+
         return sendJsonResponse(res, 200, 'Profil asigned to user(s)');
     }).catch(function(err) {
         console.log(err);
         return sendJsonError(res, err)
     });
+
+
+
+
+
 }
-
-
 apiCtrler.addUser = function(req, res, next) {
     var newUser = req.body;
 
